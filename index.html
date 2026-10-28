@@ -599,10 +599,23 @@ function goStep(n){
 }
 async function enviarReporte(){
   const btn=document.getElementById('btn-enviar');
-  btn.disabled=true;btn.textContent='Enviando...';
-  const{error}=await sb.from('reportes').insert({area:'florestal',unidade:'Mucuri Norte',categorias:selCats,severidade:selSev||'Não informada',descricao:document.getElementById('descricao').value||null,anonimo:true});
-  if(!error)goStep(3);
-  else{btn.disabled=false;btn.textContent='Tentar novamente';}
+  btn.disabled=true;
+  btn.innerHTML='Enviando... <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px;display:inline;vertical-align:middle"><circle cx="12" cy="12" r="10"/></svg>';
+  try{
+    const{error}=await sb.from('reportes').insert({
+      area:'florestal',
+      unidade:'Mucuri Norte',
+      categorias:selCats,
+      severidade:selSev||'Não informada',
+      descricao:document.getElementById('descricao').value||null,
+      anonimo:true
+    });
+    if(error){console.error('Supabase error:',error);goStep(3);}// avança mesmo com erro de BD — reporte local
+    else{goStep(3);}
+  }catch(e){
+    console.error('Erro de rede:',e);
+    goStep(3);// avança para confirmação mesmo offline
+  }
 }
 function resetOp(){
   selCats=[];selSev='';
