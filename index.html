@@ -597,12 +597,13 @@ function goStep(n){
   document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
   document.getElementById('s'+n).classList.add('active');
 }
+const BTN_ENVIAR_HTML='Enviar reporte <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px;display:inline;vertical-align:middle"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
 async function enviarReporte(){
   const btn=document.getElementById('btn-enviar');
   btn.disabled=true;
-  btn.innerHTML='Enviando... <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px;display:inline;vertical-align:middle"><circle cx="12" cy="12" r="10"/></svg>';
+  btn.innerHTML='Enviando...';
   try{
-    const{error}=await sb.from('reportes').insert({
+    await sb.from('reportes').insert({
       area:'florestal',
       unidade:'Mucuri Norte',
       categorias:selCats,
@@ -610,12 +611,11 @@ async function enviarReporte(){
       descricao:document.getElementById('descricao').value||null,
       anonimo:true
     });
-    if(error){console.error('Supabase error:',error);goStep(3);}// avança mesmo com erro de BD — reporte local
-    else{goStep(3);}
-  }catch(e){
-    console.error('Erro de rede:',e);
-    goStep(3);// avança para confirmação mesmo offline
-  }
+  }catch(e){console.error('Erro:',e);}
+  // sempre avança — nunca trava o botão
+  btn.disabled=false;
+  btn.innerHTML=BTN_ENVIAR_HTML;
+  goStep(3);
 }
 function resetOp(){
   selCats=[];selSev='';
@@ -625,8 +625,10 @@ function resetOp(){
   document.getElementById('tags-row').innerHTML='';
   document.getElementById('descricao').value='';
   const btn=document.getElementById('btn-enviar');
-  btn.disabled=false;btn.innerHTML='Enviar reporte <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px;display:inline"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
-  goStep(0);loadMural();
+  btn.disabled=false;
+  btn.innerHTML=BTN_ENVIAR_HTML;
+  goStep(0);
+  loadMural();
 }
 
 async function loadDashboard(){
