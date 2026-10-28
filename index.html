@@ -127,6 +127,59 @@ textarea::placeholder{color:var(--text3)}
 .confirm-feedback p{font-size:12px;color:var(--ambar);line-height:1.5}
 .btn-secondary{width:100%;padding:0.75rem;border:1.5px solid var(--border);border-radius:10px;background:none;font-size:13px;color:var(--text2);cursor:pointer;margin-top:0.5rem}
 
+/* CHECKLIST */
+.ck-header{padding:1rem 1.125rem 0.75rem;border-bottom:1px solid var(--border)}
+.ck-header-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+.ck-header-sub{font-size:11px;color:var(--text3)}
+.ck-progress{height:5px;background:var(--border);border-radius:3px;margin-top:0.75rem;overflow:hidden}
+.ck-progress-fill{height:100%;background:var(--verde);border-radius:3px;transition:width 0.4s ease}
+.ck-progress-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:right}
+.ck-section{padding:0.875rem 1.125rem 0}
+.ck-section-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.ck-item{display:flex;align-items:center;gap:10px;padding:0.625rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.ck-item:last-child{border-bottom:none}
+.ck-item:hover{background:var(--surface2);margin:0 -1.125rem;padding-left:1.125rem;padding-right:1.125rem}
+.ck-box{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.ck-box.checked{background:var(--verde);border-color:var(--verde)}
+.ck-box.checked svg{display:block}
+.ck-box svg{display:none;width:12px;height:12px;color:#fff}
+.ck-item-text{flex:1}
+.ck-item-text p{font-size:12px;color:var(--text2);line-height:1.4}
+.ck-item-text span{font-size:11px;color:var(--text3)}
+.ck-item.done .ck-item-text p{text-decoration:line-through;color:var(--text3)}
+.ck-footer{padding:1rem 1.125rem;border-top:1px solid var(--border);margin-top:0.5rem}
+.ck-done-banner{display:none;background:var(--verde-bg);border:1px solid var(--verde-border);border-radius:10px;padding:0.75rem;margin-bottom:0.75rem;text-align:center}
+.ck-done-banner.show{display:block}
+.ck-done-banner p{font-size:13px;font-weight:600;color:var(--verde)}
+.ck-done-banner span{font-size:11px;color:var(--verde);opacity:0.8}
+
+/* PASSAGEM DE TURNO */
+.pt-header{padding:1rem 1.125rem 0.75rem;border-bottom:1px solid var(--border)}
+.pt-header-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
+.pt-header-sub{font-size:11px;color:var(--text3)}
+.pt-body{padding:1rem 1.125rem}
+.pt-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.375rem;margin-top:0.875rem}
+.pt-label:first-child{margin-top:0}
+.pt-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:0.625rem 0.75rem;font-size:13px;color:var(--text);background:var(--bg);font-family:var(--font);line-height:1.5;transition:border-color 0.15s}
+.pt-input:focus{outline:none;border-color:var(--verde)}
+.pt-input::placeholder{color:var(--text3)}
+.pt-status-row{display:flex;gap:6px;margin-bottom:0.5rem}
+.pt-status-btn{flex:1;padding:0.5rem 0.375rem;border:1.5px solid var(--border);border-radius:8px;background:none;cursor:pointer;font-size:11px;color:var(--text2);text-align:center;transition:all 0.12s;line-height:1.4}
+.pt-status-btn.verde.sel{border-color:var(--verde);background:var(--verde-bg);color:var(--verde-dark);font-weight:600}
+.pt-status-btn.ambar.sel{border-color:var(--ambar);background:var(--ambar-bg);color:var(--ambar);font-weight:600}
+.pt-status-btn.danger.sel{border-color:var(--danger);background:var(--danger-bg);color:var(--danger);font-weight:600}
+.pt-history{padding:0 1.125rem 1rem}
+.pt-history-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;padding:0.5rem 0 0.375rem;border-top:1px solid var(--border)}
+.pt-hist-item{padding:0.625rem;background:var(--surface2);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.pt-hist-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pt-hist-who{font-size:11px;font-weight:600;color:var(--text2)}
+.pt-hist-time{font-size:10px;color:var(--text3)}
+.pt-hist-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
+.pt-hist-status.verde{background:var(--verde-bg);color:var(--verde)}
+.pt-hist-status.ambar{background:var(--ambar-bg);color:var(--ambar)}
+.pt-hist-status.danger{background:var(--danger-bg);color:var(--danger)}
+.pt-hist-body{font-size:11px;color:var(--text2);line-height:1.4}
+
 /* DASHBOARD */
 .dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap}
 .dash-title{font-size:19px;font-weight:700;color:var(--text)}
@@ -201,6 +254,14 @@ select:focus{outline:none;border-color:var(--verde)}
   <button class="nav-btn active" onclick="showScreen('operador',this)">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
     Operador de campo
+  </button>
+  <button class="nav-btn" onclick="showScreen('checklist',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    Checklist
+  </button>
+  <button class="nav-btn" onclick="showScreen('passagem',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+    Passagem de Turno
   </button>
   <button class="nav-btn" onclick="showScreen('dashboard',this)">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -353,6 +414,101 @@ select:focus{outline:none;border-color:var(--verde)}
 </div>
 </div>
 
+<!-- CHECKLIST -->
+<div id="checklist" class="screen">
+<div class="phone-wrap">
+  <div class="phone-header">
+    <div class="phone-header-inner">
+      <h2>Checklist do Operador</h2>
+      <p>Verificação obrigatória antes do turno</p>
+    </div>
+    <button class="area-pill">Mucuri Norte ▾</button>
+  </div>
+  <div class="phone-body">
+    <div class="ck-header">
+      <p class="ck-header-title">Início de turno — <span id="ck-turno">Manhã</span></p>
+      <p class="ck-header-sub" id="ck-data">—</p>
+      <div class="ck-progress"><div class="ck-progress-fill" id="ck-bar" style="width:0%"></div></div>
+      <p class="ck-progress-label"><span id="ck-cnt">0</span> de <span id="ck-total">0</span> itens concluídos</p>
+    </div>
+
+    <div class="ck-section">
+      <p class="ck-section-title">Equipamentos de proteção</p>
+      <div id="ck-group-epi"></div>
+    </div>
+    <div class="ck-section">
+      <p class="ck-section-title">Condições do local</p>
+      <div id="ck-group-local"></div>
+    </div>
+    <div class="ck-section">
+      <p class="ck-section-title">Equipamentos e ferramentas</p>
+      <div id="ck-group-equip"></div>
+    </div>
+    <div class="ck-section">
+      <p class="ck-section-title">Comunicação e briefing</p>
+      <div id="ck-group-comm"></div>
+    </div>
+
+    <div class="ck-footer">
+      <div class="ck-done-banner" id="ck-done-banner">
+        <p>✓ Checklist completo</p>
+        <span>Turno liberado para início</span>
+      </div>
+      <button class="btn-primary" id="ck-btn-enviar" onclick="enviarChecklist()" style="width:100%" disabled>
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirmar início de turno
+      </button>
+      <button class="btn-secondary" style="margin-top:6px" onclick="resetChecklist()">Reiniciar checklist</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PASSAGEM DE TURNO -->
+<div id="passagem" class="screen">
+<div class="phone-wrap">
+  <div class="phone-header">
+    <div class="phone-header-inner">
+      <h2>Passagem de Turno</h2>
+      <p>Registre o status para o próximo operador</p>
+    </div>
+    <button class="area-pill">Mucuri Norte ▾</button>
+  </div>
+  <div class="phone-body">
+    <div class="pt-body">
+      <p class="pt-label">Status geral do turno</p>
+      <div class="pt-status-row">
+        <button class="pt-status-btn verde" onclick="selectPtStatus(this,'verde')">🟢 Normal</button>
+        <button class="pt-status-btn ambar" onclick="selectPtStatus(this,'ambar')">🟡 Atenção</button>
+        <button class="pt-status-btn danger" onclick="selectPtStatus(this,'danger')">🔴 Crítico</button>
+      </div>
+
+      <p class="pt-label">O que foi feito neste turno</p>
+      <textarea class="pt-input" id="pt-feito" rows="2" placeholder="Atividades realizadas, metas atingidas..."></textarea>
+
+      <p class="pt-label">Pendências para o próximo turno</p>
+      <textarea class="pt-input" id="pt-pendencias" rows="2" placeholder="O que ficou para concluir, o que precisa de atenção..."></textarea>
+
+      <p class="pt-label">Alertas ou condições especiais</p>
+      <textarea class="pt-input" id="pt-alertas" rows="2" placeholder="Equipamentos com defeito, condições climáticas, riscos identificados..."></textarea>
+
+      <p class="pt-label">Seu nome (operador saindo)</p>
+      <input class="pt-input" id="pt-nome" type="text" placeholder="Nome completo ou matrícula">
+
+      <button class="btn-primary" id="pt-btn-enviar" onclick="enviarPassagem()" style="width:100%;margin-top:1rem">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Registrar passagem de turno
+      </button>
+    </div>
+
+    <div class="pt-history">
+      <p class="pt-history-title">Últimas passagens — Mucuri Norte</p>
+      <div id="pt-hist-list"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- DASHBOARD -->
 <div id="dashboard" class="screen">
   <div class="dash-top">
@@ -412,6 +568,8 @@ function showScreen(id,btn){
   btn.classList.add('active');
   if(id==='dashboard')loadDashboard();
   if(id==='operador')loadMural();
+  if(id==='checklist')initChecklist();
+  if(id==='passagem')loadPassagens();
 }
 
 async function loadMural(){
@@ -496,6 +654,128 @@ async function loadDashboard(){
   const iM={critico:{cls:'crit',badge:'Crítico',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'},atencao:{cls:'atenc',badge:'Atenção',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>'},oportunidade:{cls:'opor',badge:'Oportunidade',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'}};
   document.getElementById('insights-list').innerHTML=(insights&&insights.length)?insights.map(ins=>{const m=iM[ins.tipo]||iM.atencao;return'<div class="insight-row"><div class="ins-icon '+m.cls+'">'+m.icon+'</div><div class="ins-body"><p>'+ins.texto+'</p><span>'+new Date(ins.criado_em).toLocaleDateString('pt-BR')+'</span></div><span class="ins-badge '+m.cls+'">'+m.badge+'</span></div>';}).join(''):'<div class="loading">Nenhum insight gerado ainda.</div>';
 }
+/* ===== CHECKLIST ===== */
+const CK_ITEMS = {
+  'ck-group-epi': [
+    {id:'epi1', text:'Capacete inspecionado e sem danos', hint:'Verifique trincas, deformações'},
+    {id:'epi2', text:'Óculos de proteção limpos e em bom estado', hint:'Substituir se riscados'},
+    {id:'epi3', text:'Luvas adequadas para a atividade', hint:'Tipo correto para o risco'},
+    {id:'epi4', text:'Botinas com CA válido', hint:'Verificar solado e biqueira'},
+    {id:'epi5', text:'Protetor auricular disponível', hint:'Quando aplicável à área'},
+  ],
+  'ck-group-local': [
+    {id:'loc1', text:'Área de trabalho sinalizada e delimitada', hint:'Cones, fitas ou placas'},
+    {id:'loc2', text:'Piso sem obstáculos e escorregamento', hint:'Óleo, água, detritos'},
+    {id:'loc3', text:'Iluminação adequada', hint:'Mínimo 500 lux em operação'},
+    {id:'loc4', text:'Saídas de emergência desobstruídas', hint:'Verificar corredor de fuga'},
+  ],
+  'ck-group-equip': [
+    {id:'eq1', text:'Equipamentos do turno anterior sem anomalia', hint:'Verificar junto à passagem de turno'},
+    {id:'eq2', text:'Ferramentas manuais em bom estado', hint:'Cabos, arestas, fixações'},
+    {id:'eq3', text:'Extintor de incêndio acessível e dentro do prazo', hint:'Verificar lacre e pressão'},
+  ],
+  'ck-group-comm': [
+    {id:'cm1', text:'Briefing de início de turno realizado', hint:'Com supervisor ou líder'},
+    {id:'cm2', text:'Pendências da passagem de turno lidas', hint:'Conferir aba Passagem de Turno'},
+    {id:'cm3', text:'Rádio ou celular carregado e funcionando', hint:'Comunicação de emergência'},
+  ]
+};
+var ckChecked={};
+function initChecklist(){
+  const now=new Date();
+  const h=now.getHours();
+  const turno=h<12?'Manhã':h<18?'Tarde':'Noite';
+  document.getElementById('ck-turno').textContent=turno;
+  document.getElementById('ck-data').textContent=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  let total=0;
+  Object.entries(CK_ITEMS).forEach(([groupId,items])=>{
+    const container=document.getElementById(groupId);
+    container.innerHTML=items.map(item=>{
+      total++;
+      return `<div class="ck-item${ckChecked[item.id]?' done':''}" onclick="toggleCkItem('${item.id}',this)">
+        <div class="ck-box${ckChecked[item.id]?' checked':''}"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <div class="ck-item-text"><p>${item.text}</p><span>${item.hint}</span></div>
+      </div>`;
+    }).join('');
+  });
+  document.getElementById('ck-total').textContent=total;
+  updateCkProgress(total);
+}
+function toggleCkItem(id,el){
+  ckChecked[id]=!ckChecked[id];
+  el.classList.toggle('done',ckChecked[id]);
+  const box=el.querySelector('.ck-box');
+  box.classList.toggle('checked',ckChecked[id]);
+  const total=parseInt(document.getElementById('ck-total').textContent);
+  updateCkProgress(total);
+}
+function updateCkProgress(total){
+  const done=Object.values(ckChecked).filter(Boolean).length;
+  const pct=total>0?Math.round(done/total*100):0;
+  document.getElementById('ck-bar').style.width=pct+'%';
+  document.getElementById('ck-cnt').textContent=done;
+  const allDone=done===total&&total>0;
+  document.getElementById('ck-done-banner').classList.toggle('show',allDone);
+  document.getElementById('ck-btn-enviar').disabled=!allDone;
+}
+async function enviarChecklist(){
+  const btn=document.getElementById('ck-btn-enviar');
+  btn.disabled=true;btn.textContent='Registrando...';
+  const turno=document.getElementById('ck-turno').textContent;
+  const itens=Object.keys(ckChecked).filter(k=>ckChecked[k]);
+  try{
+    await sb.from('checklists').insert({area:'florestal',unidade:'Mucuri Norte',turno,itens_verificados:itens,total_itens:Object.keys(ckChecked).length,concluido:true});
+  }catch(e){}
+  btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Turno iniciado!';
+  setTimeout(()=>{btn.disabled=false;btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Confirmar início de turno';},3000);
+}
+function resetChecklist(){
+  ckChecked={};
+  initChecklist();
+}
+
+/* ===== PASSAGEM DE TURNO ===== */
+var ptStatus='';
+function selectPtStatus(btn,val){
+  document.querySelectorAll('.pt-status-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');ptStatus=val;
+}
+async function enviarPassagem(){
+  const btn=document.getElementById('pt-btn-enviar');
+  const nome=document.getElementById('pt-nome').value.trim();
+  const feito=document.getElementById('pt-feito').value.trim();
+  const pend=document.getElementById('pt-pendencias').value.trim();
+  const alertas=document.getElementById('pt-alertas').value.trim();
+  if(!ptStatus||!nome||!feito){alert('Preencha: status, seu nome e o que foi feito no turno.');return;}
+  btn.disabled=true;btn.textContent='Enviando...';
+  try{
+    await sb.from('passagens_turno').insert({area:'florestal',unidade:'Mucuri Norte',status:ptStatus,operador_saindo:nome,atividades_realizadas:feito,pendencias:pend||null,alertas:alertas||null});
+    document.getElementById('pt-feito').value='';
+    document.getElementById('pt-pendencias').value='';
+    document.getElementById('pt-alertas').value='';
+    document.getElementById('pt-nome').value='';
+    document.querySelectorAll('.pt-status-btn').forEach(b=>b.classList.remove('sel'));
+    ptStatus='';
+    loadPassagens();
+  }catch(e){}
+  btn.disabled=false;btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Registrar passagem de turno';
+}
+async function loadPassagens(){
+  const{data}=await sb.from('passagens_turno').select('*').order('criado_em',{ascending:false}).limit(5);
+  const statusLabel={verde:'Normal',ambar:'Atenção',danger:'Crítico'};
+  document.getElementById('pt-hist-list').innerHTML=(data&&data.length)?data.map(p=>{
+    const dt=new Date(p.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    return `<div class="pt-hist-item">
+      <div class="pt-hist-top">
+        <span class="pt-hist-who">${p.operador_saindo||'Anônimo'}</span>
+        <span class="pt-hist-time">${dt}</span>
+        <span class="pt-hist-status ${p.status||'verde'}">${statusLabel[p.status]||'Normal'}</span>
+      </div>
+      <div class="pt-hist-body">${p.atividades_realizadas||''}</div>
+    </div>`;
+  }).join(''):'<div class="loading">Nenhuma passagem registrada ainda.</div>';
+}
+
 function resetFilters(){document.getElementById('f-area').value='';document.getElementById('f-sev').value='';loadDashboard();}
 sb.channel('rep').on('postgres_changes',{event:'INSERT',schema:'public',table:'reportes'},()=>{if(document.getElementById('dashboard').classList.contains('active'))loadDashboard();if(document.getElementById('operador').classList.contains('active'))loadMural();}).subscribe();
 loadMural();
