@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINELA — Gestão de Risco Operacional</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --verde:#2D6A4F;--verde-dark:#1B4332;--verde-light:#52B788;--verde-bg:#D8F3DC;--verde-border:#95D5B2;
+  --ambar:#D4A017;--ambar-bg:#FFF8E7;--ambar-border:#F9C74F;
+  --bg:#F8FAF8;--surface:#ffffff;--surface2:#F0F7F0;
+  --border:#DDE8DD;--border2:#B7D4B7;
+  --text:#1A2E1A;--text2:#3D5A3E;--text3:#7A9E7A;
+  --danger:#C1121F;--danger-bg:#FFF0F0;--danger-border:#FFCCD5;
+  --success:#2D6A4F;--success-bg:#D8F3DC;--success-border:#95D5B2;
+  --warning:#D4A017;--warning-bg:#FFF8E7;--warning-border:#F9C74F;
+  --radius:10px;--font:system-ui,-apple-system,sans-serif
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+
+/* NAV */
+.nav{display:flex;align-items:center;background:var(--verde-dark);padding:0 1.25rem;gap:0;position:sticky;top:0;z-index:100}
+.nav-logo{display:flex;align-items:center;gap:10px;padding:0.875rem 1.25rem 0.875rem 0;border-right:1px solid rgba(255,255,255,0.15);margin-right:1rem}
+.nav-logo-mark{width:28px;height:28px;background:var(--verde-light);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nav-logo-mark svg{width:16px;height:16px;color:#fff}
+.nav-logo-text span{font-size:14px;font-weight:700;color:#fff;letter-spacing:0.08em;display:block}
+.nav-logo-text small{font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:0.04em}
+.nav-btn{padding:0.875rem 1rem;font-size:13px;font-weight:500;border:none;background:none;cursor:pointer;color:rgba(255,255,255,0.6);border-bottom:2px solid transparent;display:flex;align-items:center;gap:6px;transition:all 0.15s}
+.nav-btn.active{color:#fff;border-bottom-color:var(--verde-light)}
+.nav-btn svg{width:14px;height:14px}
+
+/* SCREENS */
+.screen{display:none;padding:1.5rem;max-width:920px;margin:0 auto}
+.screen.active{display:block}
+
+/* PHONE WRAP */
+.phone-wrap{max-width:400px;margin:0 auto}
+.phone-header{background:var(--verde-dark);border-radius:16px 16px 0 0;padding:1.125rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.phone-header-inner h2{font-size:15px;font-weight:700;color:#fff;letter-spacing:0.06em}
+.phone-header-inner p{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px}
+.area-pill{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff;cursor:pointer}
+.phone-body{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 16px 16px}
+
+/* STEPS */
+.step{display:none}.step.active{display:block}
+
+/* MURAL */
+.mural{padding:1.125rem}
+.mural-greeting{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.mural-sub{font-size:12px;color:var(--text3);margin-bottom:1.125rem}
+.mural-alert{display:flex;align-items:flex-start;gap:9px;padding:0.75rem;background:var(--ambar-bg);border:1px solid var(--ambar-border);border-radius:10px;margin-bottom:0.75rem}
+.mural-alert svg{width:16px;height:16px;color:var(--ambar);flex-shrink:0;margin-top:1px}
+.mural-alert-text p{font-size:12px;font-weight:600;color:var(--ambar);margin-bottom:2px}
+.mural-alert-text span{font-size:11px;color:var(--warning);line-height:1.4;display:block}
+.mural-feedback{display:flex;align-items:flex-start;gap:9px;padding:0.75rem;background:var(--success-bg);border:1px solid var(--success-border);border-radius:10px;margin-bottom:1.125rem}
+.mural-feedback svg{width:16px;height:16px;color:var(--verde);flex-shrink:0;margin-top:1px}
+.mural-feedback-text p{font-size:12px;font-weight:600;color:var(--verde);margin-bottom:2px}
+.mural-feedback-text span{font-size:11px;color:var(--verde);opacity:0.8;line-height:1.4;display:block}
+.mural-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1.125rem}
+.mural-stat{background:var(--surface2);border-radius:10px;padding:0.75rem;text-align:center}
+.mural-stat-val{font-size:22px;font-weight:700;color:var(--verde-dark)}
+.mural-stat-label{font-size:11px;color:var(--text3);margin-top:2px}
+.mural-pulso{background:var(--verde-bg);border:1px solid var(--verde-border);border-radius:10px;padding:0.75rem;margin-bottom:1.125rem}
+.mural-pulso-title{font-size:11px;font-weight:700;color:var(--verde);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px}
+.mural-pulso-text{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* STEPS 1-3 */
+.step-body{padding:1.125rem}
+.step-dots{display:flex;gap:5px;margin-bottom:1rem}
+.dot{height:3px;flex:1;border-radius:2px;background:var(--border2);transition:background 0.3s}
+.dot.active{background:var(--verde);opacity:0.4}
+.dot.done{background:var(--verde)}
+.step-eyebrow{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.step-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;line-height:1.4}
+.step-hint{font-size:12px;color:var(--text3);margin-bottom:1rem}
+.section-eyebrow{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin:0.875rem 0 0.5rem;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.cats{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+.cat-btn{padding:0.675rem;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer;text-align:left;transition:all 0.12s;display:flex;align-items:center;gap:7px;position:relative}
+.cat-btn:hover{border-color:var(--verde-light);background:var(--verde-bg)}
+.cat-btn.sel{border-color:var(--verde);background:var(--verde-bg)}
+.cat-btn svg{width:16px;height:16px;color:var(--text3);flex-shrink:0;transition:color 0.12s}
+.cat-btn.sel svg{color:var(--verde)}
+.cat-btn span{font-size:12px;color:var(--text2);line-height:1.3;transition:color 0.12s}
+.cat-btn.sel span{color:var(--verde-dark);font-weight:500}
+.checkmark{position:absolute;top:4px;right:4px;width:13px;height:13px;border-radius:50%;background:var(--verde);display:none;align-items:center;justify-content:center}
+.cat-btn.sel .checkmark{display:flex}
+.checkmark svg{width:8px;height:8px;color:#fff}
+.tags-row{display:flex;flex-wrap:wrap;gap:4px;min-height:16px;margin-bottom:0.75rem}
+.tag{background:var(--verde-bg);color:var(--verde-dark);border:1px solid var(--verde-border);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.sev-row{display:flex;gap:7px;margin-bottom:1rem}
+.sev-btn{flex:1;padding:0.625rem;border:1.5px solid var(--border);border-radius:10px;background:none;cursor:pointer;font-size:12px;color:var(--text2);text-align:center;transition:all 0.12s;line-height:1.4}
+.sev-btn.s1.sel{border-color:var(--verde);background:var(--verde-bg);color:var(--verde-dark);font-weight:500}
+.sev-btn.s2.sel{border-color:var(--ambar);background:var(--ambar-bg);color:var(--ambar);font-weight:500}
+.sev-btn.s3.sel{border-color:var(--danger);background:var(--danger-bg);color:var(--danger);font-weight:500}
+.media-row{display:flex;gap:7px;margin-bottom:0.75rem}
+.media-btn{flex:1;padding:0.625rem;border:1.5px dashed var(--border2);border-radius:10px;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-size:12px;color:var(--text3);transition:all 0.12s}
+.media-btn:hover{background:var(--surface2);color:var(--text2)}
+.media-btn svg{width:14px;height:14px}
+textarea{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:0.75rem;font-size:13px;color:var(--text);background:var(--bg);resize:none;font-family:var(--font);line-height:1.5;margin-bottom:0.75rem;transition:border-color 0.15s}
+textarea:focus{outline:none;border-color:var(--verde)}
+textarea::placeholder{color:var(--text3)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:0.75rem;background:var(--surface2);border-radius:10px;margin-bottom:0.75rem;border:1px solid var(--border)}
+.toggle-label{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:6px}
+.toggle-label svg{width:13px;height:13px;color:var(--text3)}
+.toggle{width:34px;height:18px;background:var(--verde);border-radius:9px;position:relative;cursor:pointer;flex-shrink:0}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:18px;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.btn-row{display:flex;gap:7px}
+.btn-back{padding:0.75rem 1rem;border:1.5px solid var(--border);border-radius:10px;background:none;cursor:pointer;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.btn-back svg{width:14px;height:14px}
+.btn-primary{flex:1;padding:0.75rem;background:var(--verde);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.12s}
+.btn-primary:hover{background:var(--verde-dark)}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed}
+.btn-primary svg{width:14px;height:14px}
+.btn-mural{width:100%;padding:0.875rem;background:var(--verde);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-mural svg{width:14px;height:14px}
+
+/* CONFIRM */
+.confirm-wrap{text-align:center;padding:1.375rem}
+.confirm-circle{width:56px;height:56px;background:var(--verde-bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;border:2px solid var(--verde-border)}
+.confirm-circle svg{width:26px;height:26px;color:var(--verde)}
+.confirm-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:0.5rem}
+.confirm-sub{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:1rem}
+.confirm-feedback{display:flex;align-items:flex-start;gap:8px;padding:0.75rem;background:var(--ambar-bg);border:1px solid var(--ambar-border);border-radius:10px;margin-bottom:1rem;text-align:left}
+.confirm-feedback svg{width:14px;height:14px;color:var(--ambar);flex-shrink:0;margin-top:2px}
+.confirm-feedback p{font-size:12px;color:var(--ambar);line-height:1.5}
+.btn-secondary{width:100%;padding:0.75rem;border:1.5px solid var(--border);border-radius:10px;background:none;font-size:13px;color:var(--text2);cursor:pointer;margin-top:0.5rem}
+
+/* DASHBOARD */
+.dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap}
+.dash-title{font-size:19px;font-weight:700;color:var(--text)}
+.dash-sub{font-size:12px;color:var(--text3);margin-top:3px}
+.live-badge{background:var(--danger-bg);color:var(--danger);font-size:11px;font-weight:600;padding:5px 12px;border-radius:20px;display:flex;align-items:center;gap:5px;border:1px solid var(--danger-border);white-space:nowrap}
+.live-dot{width:5px;height:5px;background:var(--danger);border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.filters{display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;background:var(--surface);padding:0.875rem;border-radius:12px;border:1px solid var(--border)}
+.filter-label{font-size:12px;color:var(--text3);font-weight:500;display:flex;align-items:center;gap:4px}
+.filter-label svg{width:12px;height:12px}
+select{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;cursor:pointer;font-family:var(--font)}
+select:focus{outline:none;border-color:var(--verde)}
+.filter-reset{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px}
+.filter-reset svg{width:11px;height:11px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.125rem}
+.kpi{background:var(--surface);border-radius:12px;padding:1rem;border:1px solid var(--border)}
+.kpi-val{font-size:24px;font-weight:700;color:var(--verde-dark)}
+.kpi-label{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500}
+.kpi-delta{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:3px;font-weight:500}
+.delta-up{color:var(--verde)}.delta-down{color:var(--danger)}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.125rem}
+.panel-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:0.875rem;display:flex;align-items:center;justify-content:space-between}
+.panel-sub{font-size:11px;color:var(--text3);font-weight:400}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.bar-label{font-size:11px;color:var(--text2);width:105px;flex-shrink:0}
+.bar-track{flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+.bar-fill.g{background:var(--verde)}.bar-fill.a{background:var(--ambar)}.bar-fill.r{background:var(--danger)}.bar-fill.l{background:var(--verde-light)}
+.bar-val{font-size:11px;color:var(--text3);width:20px;text-align:right;font-weight:600}
+.alert-box{display:flex;align-items:flex-start;gap:8px;padding:0.75rem;background:var(--ambar-bg);border-radius:10px;border:1px solid var(--ambar-border);margin-top:0.75rem}
+.alert-box svg{width:14px;height:14px;color:var(--ambar);flex-shrink:0;margin-top:1px}
+.alert-box p{font-size:12px;color:var(--ambar);line-height:1.5}
+.full-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.125rem;margin-bottom:1rem}
+.insight-row{display:flex;align-items:flex-start;gap:10px;padding:0.75rem 0;border-bottom:1px solid var(--border)}
+.insight-row:last-child{border-bottom:none;padding-bottom:0}
+.ins-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ins-icon svg{width:16px;height:16px}
+.ins-icon.crit{background:var(--danger-bg)}.ins-icon.crit svg{color:var(--danger)}
+.ins-icon.atenc{background:var(--ambar-bg)}.ins-icon.atenc svg{color:var(--ambar)}
+.ins-icon.opor{background:var(--verde-bg)}.ins-icon.opor svg{color:var(--verde)}
+.ins-body{flex:1}
+.ins-body p{font-size:12px;color:var(--text2);line-height:1.5}
+.ins-body span{font-size:11px;color:var(--text3);display:block;margin-top:3px}
+.ins-badge{font-size:10px;padding:3px 9px;border-radius:20px;white-space:nowrap;font-weight:600;flex-shrink:0;margin-top:2px}
+.ins-badge.crit{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.ins-badge.atenc{background:var(--ambar-bg);color:var(--ambar);border:1px solid var(--ambar-border)}
+.ins-badge.opor{background:var(--verde-bg);color:var(--verde-dark);border:1px solid var(--verde-border)}
+.feed-row{display:flex;gap:9px;padding:0.75rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.feed-row:last-child{border-bottom:none}
+.feed-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.feed-dot.alta{background:var(--danger)}.feed-dot.media{background:var(--ambar)}.feed-dot.baixa{background:var(--verde)}
+.feed-body p{font-size:12px;color:var(--text2);line-height:1.45}
+.feed-meta{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.feed-tag{background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:5px;font-size:10px;color:var(--text3);font-weight:500}
+.loading{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+@media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.panels{grid-template-columns:1fr}.screen{padding:1rem}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-logo-mark">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div class="nav-logo-text">
+      <span>SENTINELA</span>
+      <small>by VOOS · Suzano</small>
+    </div>
+  </div>
+  <button class="nav-btn active" onclick="showScreen('operador',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+    Operador de campo
+  </button>
+  <button class="nav-btn" onclick="showScreen('dashboard',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Painel executivo
+  </button>
+</nav>
+
+<!-- OPERADOR -->
+<div id="operador" class="screen active">
+<div class="phone-wrap">
+  <div class="phone-header">
+    <div class="phone-header-inner">
+      <h2>SENTINELA</h2>
+      <p>Operação Florestal · Mucuri Norte</p>
+    </div>
+    <button class="area-pill">Trocar área ▾</button>
+  </div>
+  <div class="phone-body">
+
+    <!-- MURAL -->
+    <div id="s0" class="step active">
+      <div class="mural">
+        <p class="mural-greeting">Bom dia, operador.</p>
+        <p class="mural-sub">Veja o que está acontecendo antes de começar o turno.</p>
+
+        <div class="mural-alert">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="mural-alert-text">
+            <p>Atenção — Mucuri Norte</p>
+            <span>Aumento de reportes de fadiga identificado nos turnos noturnos. Redobre atenção nas próximas 48h.</span>
+          </div>
+        </div>
+
+        <div class="mural-feedback">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div class="mural-feedback-text">
+            <p>Seu reporte de 23/06 gerou uma ação</p>
+            <span>A trilha 14 foi sinalizada após seu reporte de condição insegura. Obrigado.</span>
+          </div>
+        </div>
+
+        <div class="mural-stats">
+          <div class="mural-stat">
+            <div class="mural-stat-val" id="mural-total">—</div>
+            <div class="mural-stat-label">Reportes este mês</div>
+          </div>
+          <div class="mural-stat">
+            <div class="mural-stat-val">0</div>
+            <div class="mural-stat-label">Acidentes no período</div>
+          </div>
+        </div>
+
+        <div class="mural-pulso">
+          <div class="mural-pulso-title">Pulso de Segurança — Junho</div>
+          <div class="mural-pulso-text">Este mês, seus colegas fizeram <strong id="pulso-num">—</strong> reportes. Isso gerou 3 melhorias na operação. Juntos, estamos tornando a Suzano mais segura.</div>
+        </div>
+
+        <button class="btn-mural" onclick="goStep(1)">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Fazer um reporte
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div id="s1" class="step">
+      <div class="step-body">
+        <div class="step-dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div></div>
+        <p class="step-eyebrow">Etapa 1 de 3</p>
+        <p class="step-title">O que aconteceu?</p>
+        <p class="step-hint">Selecione quantas categorias quiser</p>
+
+        <p class="section-eyebrow">Segurança operacional</p>
+        <div class="cats">
+          <button class="cat-btn" onclick="toggleCat(this,'Quase-acidente')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Quase-acidente</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Condição insegura')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Condição insegura</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Falha de equipamento')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg><span>Falha de equipamento</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Risco ambiental')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.34a1 1 0 001.66 1.1C7 19 8.5 17 12 16c4 1 6 5 6 5"/><path d="M12 16c-2-3-2-7 0-10 1.5 3 3 5 3 5"/></svg><span>Risco ambiental</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+        </div>
+
+        <p class="section-eyebrow">Fator humano</p>
+        <div class="cats">
+          <button class="cat-btn" onclick="toggleCat(this,'Fadiga')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 15s1.5-2 4-2 4 2 4 2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg><span>Fadiga</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Pressão de prazo')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Pressão de prazo</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Comunicação falhou')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>Comunicação falhou</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Decisão difícil')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Decisão difícil</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+        </div>
+
+        <p class="section-eyebrow">Processo e gestão</p>
+        <div class="cats">
+          <button class="cat-btn" onclick="toggleCat(this,'Procedimento inadequado')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg><span>Procedimento inadequado</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Falta de treinamento')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Falta de treinamento</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Conflito de prioridades')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Conflito de prioridades</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+          <button class="cat-btn" onclick="toggleCat(this,'Outro')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Outro</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+        </div>
+
+        <div class="tags-row" id="tags-row"></div>
+        <button id="btn-next1" class="btn-primary" disabled onclick="goStep(2)" style="width:100%">
+          Continuar
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="s2" class="step">
+      <div class="step-body">
+        <div class="step-dots"><div class="dot done"></div><div class="dot active"></div><div class="dot"></div></div>
+        <p class="step-eyebrow">Etapa 2 de 3</p>
+        <p class="step-title">Qual foi a gravidade?</p>
+        <p class="step-hint">Sua percepção importa</p>
+        <div class="sev-row">
+          <button class="sev-btn s1" onclick="selectSev(this,'Baixa')">🟢<br>Baixa</button>
+          <button class="sev-btn s2" onclick="selectSev(this,'Média')">🟡<br>Média</button>
+          <button class="sev-btn s3" onclick="selectSev(this,'Alta')">🔴<br>Alta</button>
+        </div>
+        <p class="step-title" style="font-size:14px;margin-top:0.875rem">Quer detalhar? (opcional)</p>
+        <div class="media-row">
+          <button class="media-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/></svg>Gravar áudio</button>
+          <button class="media-btn"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Foto</button>
+        </div>
+        <textarea id="descricao" rows="3" placeholder="Descreva o que aconteceu. Não precisa ser longo."></textarea>
+        <div class="toggle-row">
+          <span class="toggle-label"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Manter identidade protegida</span>
+          <div class="toggle"></div>
+        </div>
+        <div class="btn-row">
+          <button class="btn-back" onclick="goStep(1)"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="btn-primary" id="btn-enviar" onclick="enviarReporte()">Enviar reporte <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 CONFIRM -->
+    <div id="s3" class="step">
+      <div class="confirm-wrap">
+        <div class="step-dots" style="margin-bottom:1rem"><div class="dot done"></div><div class="dot done"></div><div class="dot done"></div></div>
+        <div class="confirm-circle"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <p class="confirm-title">Reporte registrado</p>
+        <p class="confirm-sub">Sua contribuição protege a todos.<br>O time de segurança analisa cada reporte.</p>
+        <div class="confirm-feedback">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>Você receberá um retorno em até 48h sobre a ação tomada. Reportes de severidade alta são tratados em até 24h.</p>
+        </div>
+        <button class="btn-primary" onclick="resetOp()" style="width:100%">Novo reporte</button>
+        <button class="btn-secondary" onclick="goStep(0)">Voltar ao mural</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="screen">
+  <div class="dash-top">
+    <div>
+      <p class="dash-title">SENTINELA — visão executiva</p>
+      <p class="dash-sub" id="dash-sub">Carregando...</p>
+    </div>
+    <span class="live-badge"><span class="live-dot"></span> Ao vivo</span>
+  </div>
+  <div class="filters">
+    <span class="filter-label"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> Filtrar:</span>
+    <select id="f-area" onchange="loadDashboard()">
+      <option value="">Toda a empresa</option>
+      <option value="florestal">Operação florestal</option>
+      <option value="industrial">Unidades industriais</option>
+      <option value="logistica">Logística</option>
+    </select>
+    <select id="f-sev" onchange="loadDashboard()">
+      <option value="">Todas as severidades</option>
+      <option value="Alta">Alta</option>
+      <option value="Média">Média</option>
+      <option value="Baixa">Baixa</option>
+    </select>
+    <button class="filter-reset" onclick="resetFilters()"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Limpar</button>
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val" id="k-total">—</div><div class="kpi-label">Reportes no período</div><div class="kpi-delta delta-up" id="k-d1">↑ Dados reais</div></div>
+    <div class="kpi"><div class="kpi-val" id="k-anon">—</div><div class="kpi-label">Identidade protegida</div><div class="kpi-delta delta-up">↑ Cultura de confiança</div></div>
+    <div class="kpi"><div class="kpi-val" id="k-alta">—</div><div class="kpi-label">Severidade alta</div><div class="kpi-delta delta-down" id="k-d2"></div></div>
+    <div class="kpi"><div class="kpi-val" id="k-areas">—</div><div class="kpi-label">Áreas reportando</div><div class="kpi-delta delta-up">↑ Cobertura operacional</div></div>
+  </div>
+  <div class="panels">
+    <div class="panel">
+      <div class="panel-title">Categorias mais reportadas <span class="panel-sub">período selecionado</span></div>
+      <div id="cat-bars"><div class="loading">Carregando...</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Reportes recentes <span class="panel-sub">últimos registros</span></div>
+      <div id="feed-list"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+  <div class="full-panel">
+    <div class="panel-title">Inteligência de padrões <span class="panel-sub">gerada por IA · atualizada automaticamente</span></div>
+    <div id="insights-list"><div class="loading">Carregando...</div></div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL='https://isolihrsljvxfkfvdcjm.supabase.co';
+const SUPA_KEY='sb_publishable_e5jPp5OuFYQ0RGaGoUmjIg_1cvRC5Xo';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+function showScreen(id,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='dashboard')loadDashboard();
+  if(id==='operador')loadMural();
+}
+
+async function loadMural(){
+  const{data}=await sb.from('reportes').select('id',{count:'exact'});
+  const n=data?data.length:0;
+  const el=document.getElementById('mural-total');
+  const el2=document.getElementById('pulso-num');
+  if(el)el.textContent=n;
+  if(el2)el2.textContent=n;
+}
+
+var selCats=[],selSev='';
+function toggleCat(btn,name){
+  btn.classList.toggle('sel');
+  if(btn.classList.contains('sel')){if(!selCats.includes(name))selCats.push(name);}
+  else{selCats=selCats.filter(c=>c!==name);}
+  document.getElementById('btn-next1').disabled=selCats.length===0;
+  document.getElementById('tags-row').innerHTML=selCats.map(c=>'<span class="tag">'+c+'</span>').join('');
+}
+function selectSev(btn,val){
+  document.querySelectorAll('.sev-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');selSev=val;
+}
+function goStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+}
+async function enviarReporte(){
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=true;btn.textContent='Enviando...';
+  const{error}=await sb.from('reportes').insert({area:'florestal',unidade:'Mucuri Norte',categorias:selCats,severidade:selSev||'Não informada',descricao:document.getElementById('descricao').value||null,anonimo:true});
+  if(!error)goStep(3);
+  else{btn.disabled=false;btn.textContent='Tentar novamente';}
+}
+function resetOp(){
+  selCats=[];selSev='';
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.sev-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('btn-next1').disabled=true;
+  document.getElementById('tags-row').innerHTML='';
+  document.getElementById('descricao').value='';
+  const btn=document.getElementById('btn-enviar');
+  btn.disabled=false;btn.innerHTML='Enviar reporte <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px;display:inline"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+  goStep(0);loadMural();
+}
+
+async function loadDashboard(){
+  const area=document.getElementById('f-area').value;
+  const sev=document.getElementById('f-sev').value;
+  let q=sb.from('reportes').select('*').order('criado_em',{ascending:false});
+  if(area)q=q.eq('area',area);
+  if(sev)q=q.eq('severidade',sev);
+  const{data:reportes}=await q;
+  if(!reportes)return;
+  const total=reportes.length;
+  const anon=reportes.filter(r=>r.anonimo).length;
+  const alta=reportes.filter(r=>r.severidade==='Alta').length;
+  const areas=[...new Set(reportes.map(r=>r.area))].length;
+  document.getElementById('k-total').textContent=total;
+  document.getElementById('k-anon').textContent=total>0?Math.round(anon/total*100)+'%':'—';
+  document.getElementById('k-alta').textContent=alta;
+  document.getElementById('k-d2').textContent=alta>0?alta+' requer atenção':'Nenhum crítico';
+  document.getElementById('k-areas').textContent=areas||'—';
+  const aL={'':`Toda a empresa`,'florestal':'Op. florestal','industrial':'Unid. industriais','logistica':'Logística'};
+  document.getElementById('dash-sub').textContent=(aL[area]||'Toda a empresa')+' · Atualizado agora';
+  const catCount={};
+  reportes.forEach(r=>{(r.categorias||[]).forEach(c=>{catCount[c]=(catCount[c]||0)+1;});});
+  const sorted=Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const maxVal=sorted[0]?sorted[0][1]:1;
+  const cls=['a','r','g','g','a','l'];
+  document.getElementById('cat-bars').innerHTML=sorted.length?sorted.map(([cat,cnt],i)=>
+    '<div class="bar-row"><span class="bar-label">'+cat+'</span><div class="bar-track"><div class="bar-fill '+cls[i]+'" style="width:'+Math.round(cnt/maxVal*100)+'%"></div></div><span class="bar-val">'+cnt+'</span></div>'
+  ).join(''):'<div class="loading">Nenhum reporte ainda.</div>';
+  document.getElementById('feed-list').innerHTML=reportes.slice(0,4).map(r=>{
+    const cls=r.severidade==='Alta'?'alta':r.severidade==='Média'?'media':'baixa';
+    const dt=new Date(r.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const cats=(r.categorias||[]).map(c=>'<span class="feed-tag">'+c+'</span>').join('');
+    const desc=r.descricao?r.descricao.substring(0,90)+(r.descricao.length>90?'...':''):'Sem descrição adicional.';
+    return '<div class="feed-row"><div class="feed-dot '+cls+'"></div><div class="feed-body"><p>'+desc+'</p><div class="feed-meta">'+cats+'<span class="feed-tag">'+dt+'</span></div></div></div>';
+  }).join('')||'<div class="loading">Nenhum reporte ainda.</div>';
+  const{data:insights}=await sb.from('insights').select('*').order('criado_em',{ascending:false});
+  const iM={critico:{cls:'crit',badge:'Crítico',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'},atencao:{cls:'atenc',badge:'Atenção',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>'},oportunidade:{cls:'opor',badge:'Oportunidade',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'}};
+  document.getElementById('insights-list').innerHTML=(insights&&insights.length)?insights.map(ins=>{const m=iM[ins.tipo]||iM.atencao;return'<div class="insight-row"><div class="ins-icon '+m.cls+'">'+m.icon+'</div><div class="ins-body"><p>'+ins.texto+'</p><span>'+new Date(ins.criado_em).toLocaleDateString('pt-BR')+'</span></div><span class="ins-badge '+m.cls+'">'+m.badge+'</span></div>';}).join(''):'<div class="loading">Nenhum insight gerado ainda.</div>';
+}
+function resetFilters(){document.getElementById('f-area').value='';document.getElementById('f-sev').value='';loadDashboard();}
+sb.channel('rep').on('postgres_changes',{event:'INSERT',schema:'public',table:'reportes'},()=>{if(document.getElementById('dashboard').classList.contains('active'))loadDashboard();if(document.getElementById('operador').classList.contains('active'))loadMural();}).subscribe();
+loadMural();
+</script>
+</body>
+</html>
