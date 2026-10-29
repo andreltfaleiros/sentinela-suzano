@@ -637,33 +637,34 @@ async function loadDashboard(){
   let q=sb.from('reportes').select('*').order('criado_em',{ascending:false});
   if(area)q=q.eq('area',area);
   if(sev)q=q.eq('severidade',sev);
-  const{data:reportes}=await q;
-  if(!reportes)return;
-  const total=reportes.length;
-  const anon=reportes.filter(r=>r.anonimo).length;
-  const alta=reportes.filter(r=>r.severidade==='Alta').length;
-  const areas=[...new Set(reportes.map(r=>r.area))].length;
-  document.getElementById('k-total').textContent=total;
-  document.getElementById('k-anon').textContent=total>0?Math.round(anon/total*100)+'%':'—';
-  document.getElementById('k-alta').textContent=alta;
+  const{data:reportes,error:dbErr}=await q;
+  if(dbErr)console.error('Dashboard error:',dbErr);
+  const rows=reportes||[];
+  const total=rows.length;
+  const anon=rows.filter(r=>r.anonimo).length;
+  const alta=rows.filter(r=>r.severidade==='Alta').length;
+  const areas=[...new Set(rows.map(r=>r.area).filter(Boolean))].length;
+  document.getElementById('k-total').textContent=total||'0';
+  document.getElementById('k-anon').textContent=total>0?Math.round(anon/total*100)+'%':'0%';
+  document.getElementById('k-alta').textContent=alta||'0';
   document.getElementById('k-d2').textContent=alta>0?alta+' requer atenção':'Nenhum crítico';
-  document.getElementById('k-areas').textContent=areas||'—';
+  document.getElementById('k-areas').textContent=areas||'0';
   const aL={'':`Toda a empresa`,'florestal':'Op. florestal','industrial':'Unid. industriais','logistica':'Logística'};
   document.getElementById('dash-sub').textContent=(aL[area]||'Toda a empresa')+' · Atualizado agora';
   const catCount={};
-  reportes.forEach(r=>{(r.categorias||[]).forEach(c=>{catCount[c]=(catCount[c]||0)+1;});});
+  rows.forEach(r=>{(r.categorias||[]).forEach(c=>{catCount[c]=(catCount[c]||0)+1;});});
   const sorted=Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
   const maxVal=sorted[0]?sorted[0][1]:1;
   const cls=['a','r','g','g','a','l'];
   document.getElementById('cat-bars').innerHTML=sorted.length?sorted.map(([cat,cnt],i)=>
     '<div class="bar-row"><span class="bar-label">'+cat+'</span><div class="bar-track"><div class="bar-fill '+cls[i]+'" style="width:'+Math.round(cnt/maxVal*100)+'%"></div></div><span class="bar-val">'+cnt+'</span></div>'
   ).join(''):'<div class="loading">Nenhum reporte ainda.</div>';
-  document.getElementById('feed-list').innerHTML=reportes.slice(0,4).map(r=>{
-    const cls=r.severidade==='Alta'?'alta':r.severidade==='Média'?'media':'baixa';
-    const dt=new Date(r.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  document.getElementById('feed-list').innerHTML=rows.slice(0,4).map(r=>{
+    const dotCls=r.severidade==='Alta'?'alta':r.severidade==='Média'?'media':'baixa';
+    const dt=r.criado_em?new Date(r.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
     const cats=(r.categorias||[]).map(c=>'<span class="feed-tag">'+c+'</span>').join('');
     const desc=r.descricao?r.descricao.substring(0,90)+(r.descricao.length>90?'...':''):'Sem descrição adicional.';
-    return '<div class="feed-row"><div class="feed-dot '+cls+'"></div><div class="feed-body"><p>'+desc+'</p><div class="feed-meta">'+cats+'<span class="feed-tag">'+dt+'</span></div></div></div>';
+    return '<div class="feed-row"><div class="feed-dot '+dotCls+'"></div><div class="feed-body"><p>'+desc+'</p><div class="feed-meta">'+cats+'<span class="feed-tag">'+dt+'</span></div></div></div>';
   }).join('')||'<div class="loading">Nenhum reporte ainda.</div>';
   const{data:insights}=await sb.from('insights').select('*').order('criado_em',{ascending:false});
   const iM={critico:{cls:'crit',badge:'Crítico',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'},atencao:{cls:'atenc',badge:'Atenção',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>'},oportunidade:{cls:'opor',badge:'Oportunidade',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'}};
