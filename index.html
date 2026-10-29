@@ -926,8 +926,8 @@ function resetChecklist(){
 var ptData={};// acumula dados das seções
 
 function ptChip(btn,campo,val){
-  // deselect chips do mesmo grupo
-  btn.closest('.pt-chips').querySelectorAll('.pt-chip').forEach(b=>{b.classList.remove('sel');b.classList.remove('verde');b.classList.remove('ambar');b.classList.remove('danger');});
+  // deselect chips do mesmo grupo — remove apenas 'sel', mantém cor
+  btn.closest('.pt-chips').querySelectorAll('.pt-chip').forEach(b=>b.classList.remove('sel'));
   btn.classList.add('sel');
   ptData[campo]=val;
 }
