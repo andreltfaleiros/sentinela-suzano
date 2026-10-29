@@ -154,31 +154,55 @@ textarea::placeholder{color:var(--text3)}
 .ck-done-banner span{font-size:11px;color:var(--verde);opacity:0.8}
 
 /* PASSAGEM DE TURNO */
+.pt-screen{display:none}.pt-screen.active{display:block}
 .pt-header{padding:1rem 1.125rem 0.75rem;border-bottom:1px solid var(--border)}
 .pt-header-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px}
 .pt-header-sub{font-size:11px;color:var(--text3)}
+.pt-steps{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.pt-step-tab{flex:1;padding:0.5rem;font-size:11px;font-weight:600;color:var(--text3);text-align:center;border:none;background:none;cursor:default;border-bottom:2px solid transparent;letter-spacing:0.04em}
+.pt-step-tab.active{color:var(--verde);border-bottom-color:var(--verde)}
+.pt-step-tab.done{color:var(--verde-light)}
 .pt-body{padding:1rem 1.125rem}
+.pt-section-title{font-size:12px;font-weight:700;color:var(--verde-dark);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.125rem}
+.pt-section-hint{font-size:11px;color:var(--text3);margin-bottom:0.75rem}
 .pt-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:0.375rem;margin-top:0.875rem}
 .pt-label:first-child{margin-top:0}
 .pt-input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:0.625rem 0.75rem;font-size:13px;color:var(--text);background:var(--bg);font-family:var(--font);line-height:1.5;transition:border-color 0.15s}
 .pt-input:focus{outline:none;border-color:var(--verde)}
 .pt-input::placeholder{color:var(--text3)}
-.pt-status-row{display:flex;gap:6px;margin-bottom:0.5rem}
-.pt-status-btn{flex:1;padding:0.5rem 0.375rem;border:1.5px solid var(--border);border-radius:8px;background:none;cursor:pointer;font-size:11px;color:var(--text2);text-align:center;transition:all 0.12s;line-height:1.4}
-.pt-status-btn.verde.sel{border-color:var(--verde);background:var(--verde-bg);color:var(--verde-dark);font-weight:600}
-.pt-status-btn.ambar.sel{border-color:var(--ambar);background:var(--ambar-bg);color:var(--ambar);font-weight:600}
-.pt-status-btn.danger.sel{border-color:var(--danger);background:var(--danger-bg);color:var(--danger);font-weight:600}
+.pt-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.5rem}
+.pt-chip{padding:5px 10px;border:1.5px solid var(--border);border-radius:20px;background:none;cursor:pointer;font-size:11px;color:var(--text2);transition:all 0.12s;font-family:var(--font)}
+.pt-chip:hover{border-color:var(--verde-light);background:var(--verde-bg)}
+.pt-chip.sel.verde{border-color:var(--verde);background:var(--verde-bg);color:var(--verde-dark);font-weight:600}
+.pt-chip.sel.ambar{border-color:var(--ambar);background:var(--ambar-bg);color:var(--ambar);font-weight:600}
+.pt-chip.sel.danger{border-color:var(--danger);background:var(--danger-bg);color:var(--danger);font-weight:600}
+.pt-prod-row{display:flex;gap:8px;align-items:center;margin-bottom:0.5rem}
+.pt-prod-pct{width:72px;border:1.5px solid var(--border);border-radius:10px;padding:0.5rem 0.625rem;font-size:15px;font-weight:700;color:var(--verde-dark);text-align:center;background:var(--bg);font-family:var(--font)}
+.pt-prod-pct:focus{outline:none;border-color:var(--verde)}
+.pt-confirm-box{background:var(--verde-bg);border:1px solid var(--verde-border);border-radius:12px;padding:1rem;margin-bottom:0.875rem}
+.pt-confirm-title{font-size:13px;font-weight:700;color:var(--verde-dark);margin-bottom:0.75rem;display:flex;align-items:center;gap:6px}
+.pt-confirm-title svg{width:15px;height:15px;color:var(--verde)}
+.pt-confirm-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--verde-border)}
+.pt-confirm-row:last-child{border-bottom:none}
+.pt-confirm-key{font-size:11px;color:var(--verde);font-weight:600}
+.pt-confirm-val{font-size:11px;color:var(--verde-dark);text-align:right;max-width:60%}
+.pt-sign-box{background:var(--surface2);border:1.5px dashed var(--border2);border-radius:10px;padding:0.875rem;text-align:center;margin-bottom:0.75rem}
+.pt-sign-box p{font-size:12px;color:var(--text2);margin-bottom:0.5rem}
+.pt-sign-box span{font-size:11px;color:var(--text3)}
 .pt-history{padding:0 1.125rem 1rem}
 .pt-history-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;padding:0.5rem 0 0.375rem;border-top:1px solid var(--border)}
-.pt-hist-item{padding:0.625rem;background:var(--surface2);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
-.pt-hist-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.pt-hist-item{padding:0.75rem;background:var(--surface2);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
+.pt-hist-top{display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap}
 .pt-hist-who{font-size:11px;font-weight:600;color:var(--text2)}
-.pt-hist-time{font-size:10px;color:var(--text3)}
+.pt-hist-arrow{font-size:10px;color:var(--text3)}
+.pt-hist-time{font-size:10px;color:var(--text3);margin-left:auto}
 .pt-hist-status{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px}
 .pt-hist-status.verde{background:var(--verde-bg);color:var(--verde)}
 .pt-hist-status.ambar{background:var(--ambar-bg);color:var(--ambar)}
 .pt-hist-status.danger{background:var(--danger-bg);color:var(--danger)}
-.pt-hist-body{font-size:11px;color:var(--text2);line-height:1.4}
+.pt-hist-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.pt-hist-cell{font-size:10px;color:var(--text2);line-height:1.4}
+.pt-hist-cell-label{font-weight:600;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.04em}
 
 /* DASHBOARD */
 .dash-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;flex-wrap:wrap}
@@ -470,41 +494,147 @@ select:focus{outline:none;border-color:var(--verde)}
   <div class="phone-header">
     <div class="phone-header-inner">
       <h2>Passagem de Turno</h2>
-      <p>Registre o status para o próximo operador</p>
+      <p>Briefing padronizado — aviação industrial</p>
     </div>
     <button class="area-pill">Mucuri Norte ▾</button>
   </div>
   <div class="phone-body">
-    <div class="pt-body">
-      <p class="pt-label">Status geral do turno</p>
-      <div class="pt-status-row">
-        <button class="pt-status-btn verde" onclick="selectPtStatus(this,'verde')">🟢 Normal</button>
-        <button class="pt-status-btn ambar" onclick="selectPtStatus(this,'ambar')">🟡 Atenção</button>
-        <button class="pt-status-btn danger" onclick="selectPtStatus(this,'danger')">🔴 Crítico</button>
+
+    <!-- TELA A: BRIEFING (operador saindo) -->
+    <div id="pt-tela-briefing" class="pt-screen active">
+      <div class="pt-steps">
+        <span class="pt-step-tab active" id="pt-tab-1">1 · Situação</span>
+        <span class="pt-step-tab" id="pt-tab-2">2 · Produção</span>
+        <span class="pt-step-tab" id="pt-tab-3">3 · Equip.</span>
+        <span class="pt-step-tab" id="pt-tab-4">4–7</span>
       </div>
 
-      <p class="pt-label">O que foi feito neste turno</p>
-      <textarea class="pt-input" id="pt-feito" rows="2" placeholder="Atividades realizadas, metas atingidas..."></textarea>
+      <!-- SEÇÃO 1: SITUAÇÃO -->
+      <div id="pt-sec-1" class="pt-body">
+        <p class="pt-section-title">1 · Situação do turno</p>
+        <p class="pt-section-hint">Como está o turno que está sendo encerrado?</p>
+        <div class="pt-chips">
+          <button class="pt-chip verde" onclick="ptChip(this,'situacao','verde')">🟢 Normal</button>
+          <button class="pt-chip ambar" onclick="ptChip(this,'situacao','ambar')">🟡 Atenção</button>
+          <button class="pt-chip danger" onclick="ptChip(this,'situacao','danger')">🔴 Crítico</button>
+        </div>
+        <p class="pt-label" style="margin-top:0.75rem">Observações gerais <span style="font-weight:400;text-transform:none">(opcional)</span></p>
+        <textarea class="pt-input" id="pt-obs-geral" rows="2" placeholder="Contexto adicional sobre o turno..."></textarea>
+        <button class="btn-primary" onclick="ptNextSec(1)" style="width:100%;margin-top:1rem">Próximo →</button>
+      </div>
 
-      <p class="pt-label">Pendências para o próximo turno</p>
-      <textarea class="pt-input" id="pt-pendencias" rows="2" placeholder="O que ficou para concluir, o que precisa de atenção..."></textarea>
+      <!-- SEÇÃO 2: PRODUÇÃO -->
+      <div id="pt-sec-2" class="pt-body" style="display:none">
+        <p class="pt-section-title">2 · Produção</p>
+        <p class="pt-section-hint">Resultado de produção no turno</p>
+        <p class="pt-label">% atingido do turno</p>
+        <div class="pt-prod-row">
+          <input class="pt-prod-pct" id="pt-prod-pct" type="number" min="0" max="999" placeholder="—">
+          <span style="font-size:18px;font-weight:700;color:var(--text3)">%</span>
+        </div>
+        <p class="pt-label" style="margin-top:0.75rem">Desempenho em relação à meta</p>
+        <div class="pt-chips">
+          <button class="pt-chip verde" onclick="ptChip(this,'producao_meta','acima')">⬆ Acima da meta</button>
+          <button class="pt-chip verde" onclick="ptChip(this,'producao_meta','na_meta')">✓ Na meta</button>
+          <button class="pt-chip danger" onclick="ptChip(this,'producao_meta','abaixo')">⬇ Abaixo da meta</button>
+        </div>
+        <p class="pt-label" style="margin-top:0.75rem">Observações de produção <span style="font-weight:400;text-transform:none">(opcional)</span></p>
+        <textarea class="pt-input" id="pt-obs-producao" rows="2" placeholder="Causas de variação, intercorrências..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button class="btn-secondary" onclick="ptPrevSec(2)" style="flex:1">← Voltar</button>
+          <button class="btn-primary" onclick="ptNextSec(2)" style="flex:2">Próximo →</button>
+        </div>
+      </div>
 
-      <p class="pt-label">Alertas ou condições especiais</p>
-      <textarea class="pt-input" id="pt-alertas" rows="2" placeholder="Equipamentos com defeito, condições climáticas, riscos identificados..."></textarea>
+      <!-- SEÇÃO 3: EQUIPAMENTOS -->
+      <div id="pt-sec-3" class="pt-body" style="display:none">
+        <p class="pt-section-title">3 · Equipamentos</p>
+        <p class="pt-section-hint">Status dos equipamentos no turno</p>
+        <div class="pt-chips">
+          <button class="pt-chip verde" onclick="ptChip(this,'equipamentos_status','ok')">✓ Tudo ok</button>
+          <button class="pt-chip ambar" onclick="ptChip(this,'equipamentos_status','defeito')">⚠ Com defeito</button>
+          <button class="pt-chip ambar" onclick="ptChip(this,'equipamentos_status','manutencao')">🔧 Em manutenção</button>
+        </div>
+        <p class="pt-label" style="margin-top:0.75rem">Detalhes <span style="font-weight:400;text-transform:none">(opcional)</span></p>
+        <textarea class="pt-input" id="pt-equipamentos" rows="2" placeholder="Qual equipamento, qual defeito, número OS..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button class="btn-secondary" onclick="ptPrevSec(3)" style="flex:1">← Voltar</button>
+          <button class="btn-primary" onclick="ptNextSec(3)" style="flex:2">Próximo →</button>
+        </div>
+      </div>
 
-      <p class="pt-label">Seu nome (operador saindo)</p>
-      <input class="pt-input" id="pt-nome" type="text" placeholder="Nome completo ou matrícula">
+      <!-- SEÇÃO 4-7: SEGURANÇA + PENDÊNCIAS + RECADOS + SAINDO -->
+      <div id="pt-sec-4" class="pt-body" style="display:none">
+        <p class="pt-section-title">4 · Segurança</p>
+        <div class="pt-chips" style="margin-bottom:0.5rem">
+          <button class="pt-chip verde" onclick="ptChip(this,'seguranca_status','sem_ocorrencias')">✓ Sem ocorrências</button>
+          <button class="pt-chip ambar" onclick="ptChip(this,'seguranca_status','quase_acidente')">⚠ Quase-acidente</button>
+          <button class="pt-chip danger" onclick="ptChip(this,'seguranca_status','condicao_insegura')">🚨 Cond. insegura</button>
+        </div>
+        <textarea class="pt-input" id="pt-seguranca" rows="2" placeholder="Descreva ocorrências, riscos identificados..."></textarea>
 
-      <button class="btn-primary" id="pt-btn-enviar" onclick="enviarPassagem()" style="width:100%;margin-top:1rem">
-        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Registrar passagem de turno
-      </button>
+        <p class="pt-section-title" style="margin-top:1rem">5 · Pendências</p>
+        <textarea class="pt-input" id="pt-pendencias" rows="2" placeholder="O que não foi concluído e precisa de atenção no próximo turno..."></textarea>
+
+        <p class="pt-section-title" style="margin-top:1rem">6 · Recados</p>
+        <textarea class="pt-input" id="pt-recados" rows="2" placeholder="Avisos ao próximo operador, informações da supervisão..."></textarea>
+
+        <p class="pt-section-title" style="margin-top:1rem">7 · Operador saindo</p>
+        <input class="pt-input" id="pt-nome-saindo" type="text" placeholder="Nome completo ou matrícula">
+
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button class="btn-secondary" onclick="ptPrevSec(4)" style="flex:1">← Voltar</button>
+          <button class="btn-primary" onclick="ptIrParaConfirmacao()" style="flex:2">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+            Gerar briefing
+          </button>
+        </div>
+      </div>
     </div>
 
+    <!-- TELA B: CONFIRMAÇÃO (operador entrante) -->
+    <div id="pt-tela-confirmacao" class="pt-screen" style="display:none">
+      <div class="pt-body">
+        <p class="pt-section-title" style="font-size:14px;margin-bottom:0.25rem">✈ Briefing de Passagem</p>
+        <p class="pt-section-hint" style="margin-bottom:0.875rem">Mucuri Norte · <span id="pt-conf-hora"></span></p>
+
+        <div class="pt-confirm-box" id="pt-conf-resumo"></div>
+
+        <p class="pt-section-title" style="margin-top:0.875rem">8 · Operador entrante</p>
+        <p class="pt-section-hint">Confirme o recebimento do briefing</p>
+        <input class="pt-input" id="pt-nome-entrante" type="text" placeholder="Nome completo ou matrícula" style="margin-bottom:0.75rem">
+
+        <div class="pt-sign-box">
+          <p>Ao tocar em <strong>Confirmar recebimento</strong>, o operador entrante declara ter recebido e compreendido o briefing do turno anterior.</p>
+          <span>Registro com data, hora e IP ficam salvos no sistema.</span>
+        </div>
+
+        <button class="btn-primary" id="pt-btn-confirmar" onclick="confirmarPassagem()" style="width:100%">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+          Confirmar recebimento
+        </button>
+        <button class="btn-secondary" onclick="ptVoltarBriefing()" style="width:100%;margin-top:8px">← Editar briefing</button>
+      </div>
+    </div>
+
+    <!-- TELA C: SUCESSO -->
+    <div id="pt-tela-sucesso" class="pt-screen" style="display:none">
+      <div class="pt-body" style="text-align:center;padding:2rem 1.125rem">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--verde-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+          <svg fill="none" stroke="var(--verde)" stroke-width="2.5" viewBox="0 0 24 24" style="width:28px;height:28px"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <p style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:0.5rem">Passagem registrada!</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:1.5rem">Briefing salvo com assinatura do operador entrante.<br>Turno entregue com sucesso.</p>
+        <button class="btn-primary" onclick="ptNovaPassagem()" style="width:100%">Nova passagem de turno</button>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
     <div class="pt-history">
       <p class="pt-history-title">Últimas passagens — Mucuri Norte</p>
       <div id="pt-hist-list"><div class="loading">Carregando...</div></div>
     </div>
+
   </div>
 </div>
 </div>
@@ -751,43 +881,154 @@ function resetChecklist(){
 }
 
 /* ===== PASSAGEM DE TURNO ===== */
-var ptStatus='';
-function selectPtStatus(btn,val){
-  document.querySelectorAll('.pt-status-btn').forEach(b=>b.classList.remove('sel'));
-  btn.classList.add('sel');ptStatus=val;
+/* ===== PASSAGEM DE TURNO — BRIEFING PADRONIZADO ===== */
+var ptData={};// acumula dados das seções
+
+function ptChip(btn,campo,val){
+  // deselect chips do mesmo grupo
+  btn.closest('.pt-chips').querySelectorAll('.pt-chip').forEach(b=>{b.classList.remove('sel');b.classList.remove('verde');b.classList.remove('ambar');b.classList.remove('danger');});
+  btn.classList.add('sel');
+  ptData[campo]=val;
 }
-async function enviarPassagem(){
-  const btn=document.getElementById('pt-btn-enviar');
-  const nome=document.getElementById('pt-nome').value.trim();
-  const feito=document.getElementById('pt-feito').value.trim();
-  const pend=document.getElementById('pt-pendencias').value.trim();
-  const alertas=document.getElementById('pt-alertas').value.trim();
-  if(!ptStatus||!nome||!feito){alert('Preencha: status, seu nome e o que foi feito no turno.');return;}
-  btn.disabled=true;btn.textContent='Enviando...';
+
+function ptNextSec(secAtual){
+  // validação por seção
+  if(secAtual===1&&!ptData.situacao){alert('Selecione o status do turno (Normal, Atenção ou Crítico).');return;}
+  if(secAtual===2){/* produção opcional */}
+  if(secAtual===3){/* equipamentos opcional */}
+  const tabs=['pt-tab-1','pt-tab-2','pt-tab-3','pt-tab-4'];
+  document.getElementById('pt-sec-'+secAtual).style.display='none';
+  document.getElementById('pt-sec-'+(secAtual+1)).style.display='block';
+  tabs.forEach((t,i)=>{
+    const el=document.getElementById(t);
+    el.classList.remove('active','done');
+    if(i<secAtual)el.classList.add('done');
+    if(i===secAtual)el.classList.add('active');
+  });
+}
+
+function ptPrevSec(secAtual){
+  document.getElementById('pt-sec-'+secAtual).style.display='none';
+  document.getElementById('pt-sec-'+(secAtual-1)).style.display='block';
+  const tabs=['pt-tab-1','pt-tab-2','pt-tab-3','pt-tab-4'];
+  tabs.forEach((t,i)=>{
+    const el=document.getElementById(t);
+    el.classList.remove('active','done');
+    if(i<secAtual-2)el.classList.add('done');
+    if(i===secAtual-2)el.classList.add('active');
+  });
+}
+
+function ptIrParaConfirmacao(){
+  const nome=document.getElementById('pt-nome-saindo').value.trim();
+  if(!nome){alert('Informe o nome ou matrícula do operador saindo.');return;}
+  // coleta campos de texto
+  ptData.obs_geral=document.getElementById('pt-obs-geral').value.trim()||null;
+  ptData.prod_pct=document.getElementById('pt-prod-pct').value||null;
+  ptData.obs_producao=document.getElementById('pt-obs-producao').value.trim()||null;
+  ptData.equipamentos=document.getElementById('pt-equipamentos').value.trim()||null;
+  ptData.seguranca=document.getElementById('pt-seguranca').value.trim()||null;
+  ptData.pendencias=document.getElementById('pt-pendencias').value.trim()||null;
+  ptData.recados=document.getElementById('pt-recados').value.trim()||null;
+  ptData.operador_saindo=nome;
+
+  // monta resumo
+  const situacaoLabel={verde:'🟢 Normal',ambar:'🟡 Atenção',danger:'🔴 Crítico'};
+  const metaLabel={acima:'⬆ Acima da meta',na_meta:'✓ Na meta',abaixo:'⬇ Abaixo da meta'};
+  const equipLabel={ok:'✓ Tudo ok',defeito:'⚠ Com defeito',manutencao:'🔧 Em manutenção'};
+  const segLabel={sem_ocorrencias:'✓ Sem ocorrências',quase_acidente:'⚠ Quase-acidente',condicao_insegura:'🚨 Condição insegura'};
+
+  const linhas=[
+    {k:'Situação',v:situacaoLabel[ptData.situacao]||'—'},
+    {k:'Produção',v:(ptData.prod_pct?ptData.prod_pct+'%':'')+' '+(metaLabel[ptData.producao_meta]||'')},
+    {k:'Equipamentos',v:equipLabel[ptData.equipamentos_status]||(ptData.equipamentos||'—')},
+    {k:'Segurança',v:segLabel[ptData.seguranca_status]||'—'},
+    {k:'Pendências',v:ptData.pendencias||'Nenhuma'},
+    {k:'Recados',v:ptData.recados||'Nenhum'},
+    {k:'Operador saindo',v:ptData.operador_saindo},
+  ];
+
+  document.getElementById('pt-conf-resumo').innerHTML=
+    '<div class="pt-confirm-title"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Resumo do briefing</div>'+
+    linhas.map(l=>`<div class="pt-confirm-row"><span class="pt-confirm-key">${l.k}</span><span class="pt-confirm-val">${(l.v||'').trim()||'—'}</span></div>`).join('');
+
+  document.getElementById('pt-conf-hora').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+  document.getElementById('pt-tela-briefing').style.display='none';
+  document.getElementById('pt-tela-confirmacao').style.display='block';
+}
+
+function ptVoltarBriefing(){
+  document.getElementById('pt-tela-confirmacao').style.display='none';
+  document.getElementById('pt-tela-briefing').style.display='block';
+}
+
+async function confirmarPassagem(){
+  const entrante=document.getElementById('pt-nome-entrante').value.trim();
+  if(!entrante){alert('Informe o nome ou matrícula do operador entrante.');return;}
+  const btn=document.getElementById('pt-btn-confirmar');
+  btn.disabled=true;btn.textContent='Salvando...';
   try{
-    await sb.from('passagens_turno').insert({area:'florestal',unidade:'Mucuri Norte',status:ptStatus,operador_saindo:nome,atividades_realizadas:feito,pendencias:pend||null,alertas:alertas||null});
-    document.getElementById('pt-feito').value='';
-    document.getElementById('pt-pendencias').value='';
-    document.getElementById('pt-alertas').value='';
-    document.getElementById('pt-nome').value='';
-    document.querySelectorAll('.pt-status-btn').forEach(b=>b.classList.remove('sel'));
-    ptStatus='';
-    loadPassagens();
-  }catch(e){}
-  btn.disabled=false;btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Registrar passagem de turno';
+    await sb.from('passagens_turno').insert({
+      area:'florestal',unidade:'Mucuri Norte',
+      status:ptData.situacao,
+      operador_saindo:ptData.operador_saindo,
+      operador_entrante:entrante,
+      producao_pct:ptData.prod_pct?parseFloat(ptData.prod_pct):null,
+      producao_meta:ptData.producao_meta||null,
+      equipamentos_status:ptData.equipamentos_status||null,
+      seguranca_status:ptData.seguranca_status||null,
+      obs_geral:ptData.obs_geral,
+      obs_producao:ptData.obs_producao,
+      equipamentos:ptData.equipamentos,
+      seguranca:ptData.seguranca,
+      pendencias:ptData.pendencias,
+      recados:ptData.recados,
+    });
+  }catch(e){console.error('Passagem erro:',e);}
+  // sempre avança mesmo se Supabase falhar
+  btn.disabled=false;
+  document.getElementById('pt-tela-confirmacao').style.display='none';
+  document.getElementById('pt-tela-sucesso').style.display='block';
+  loadPassagens();
 }
+
+function ptNovaPassagem(){
+  // reset completo
+  ptData={};
+  ['pt-obs-geral','pt-obs-producao','pt-equipamentos','pt-seguranca','pt-pendencias','pt-recados'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['pt-prod-pct','pt-nome-saindo','pt-nome-entrante'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.querySelectorAll('.pt-chip.sel').forEach(b=>b.classList.remove('sel'));
+  // volta para seção 1
+  for(let i=1;i<=4;i++){const el=document.getElementById('pt-sec-'+i);if(el)el.style.display=i===1?'block':'none';}
+  const tabs=['pt-tab-1','pt-tab-2','pt-tab-3','pt-tab-4'];
+  tabs.forEach((t,i)=>{const el=document.getElementById(t);el.classList.remove('active','done');if(i===0)el.classList.add('active');});
+  document.getElementById('pt-tela-sucesso').style.display='none';
+  document.getElementById('pt-tela-briefing').style.display='block';
+}
+
 async function loadPassagens(){
   const{data}=await sb.from('passagens_turno').select('*').order('criado_em',{ascending:false}).limit(5);
   const statusLabel={verde:'Normal',ambar:'Atenção',danger:'Crítico'};
+  const statusCls={verde:'verde',ambar:'ambar',danger:'danger'};
   document.getElementById('pt-hist-list').innerHTML=(data&&data.length)?data.map(p=>{
     const dt=new Date(p.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const cls=statusCls[p.status]||'verde';
+    const entrante=p.operador_entrante?` <span class="pt-hist-arrow">→</span> <span class="pt-hist-who">${p.operador_entrante}</span>`:'';
+    const pct=p.producao_pct!=null?`${p.producao_pct}% · `:'';
+    const meta={acima:'↑ meta',na_meta:'✓ meta',abaixo:'↓ meta'}[p.producao_meta]||'';
+    const celulas=[
+      p.pendencias?`<div class="pt-hist-cell"><span class="pt-hist-cell-label">Pendências</span><br>${p.pendencias}</div>`:'',
+      p.equipamentos_status?`<div class="pt-hist-cell"><span class="pt-hist-cell-label">Equip.</span><br>${p.equipamentos_status}</div>`:'',
+    ].filter(Boolean).join('');
     return `<div class="pt-hist-item">
       <div class="pt-hist-top">
-        <span class="pt-hist-who">${p.operador_saindo||'Anônimo'}</span>
+        <span class="pt-hist-who">${p.operador_saindo||'—'}</span>${entrante}
+        <span class="pt-hist-status ${cls}">${statusLabel[p.status]||'Normal'}</span>
         <span class="pt-hist-time">${dt}</span>
-        <span class="pt-hist-status ${p.status||'verde'}">${statusLabel[p.status]||'Normal'}</span>
       </div>
-      <div class="pt-hist-body">${p.atividades_realizadas||''}</div>
+      ${pct||meta?`<div style="font-size:10px;color:var(--text2);margin-bottom:4px">${pct}${meta}</div>`:''}
+      ${celulas?`<div class="pt-hist-grid">${celulas}</div>`:''}
     </div>`;
   }).join(''):'<div class="loading">Nenhuma passagem registrada ainda.</div>';
 }
