@@ -187,8 +187,17 @@ textarea::placeholder{color:var(--text3)}
 .pt-confirm-key{font-size:11px;color:var(--verde);font-weight:600}
 .pt-confirm-val{font-size:11px;color:var(--verde-dark);text-align:right;max-width:60%}
 .pt-sign-box{background:var(--surface2);border:1.5px dashed var(--border2);border-radius:10px;padding:0.875rem;text-align:center;margin-bottom:0.75rem}
-.pt-sign-box p{font-size:12px;color:var(--text2);margin-bottom:0.5rem}
+.pt-sign-box p{font-size:12px;color:var(--text2);margin-bottom:0}
 .pt-sign-box span{font-size:11px;color:var(--text3)}
+.pt-check-list{display:flex;flex-direction:column;gap:6px;margin-bottom:0.25rem}
+.pt-check-item{display:flex;align-items:flex-start;gap:10px;padding:0.625rem 0.75rem;border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color 0.12s,background 0.12s;user-select:none}
+.pt-check-item:has(input:checked){border-color:var(--verde);background:var(--verde-bg)}
+.pt-check-item input{position:absolute;opacity:0;width:0;height:0}
+.pt-check-box{flex-shrink:0;width:18px;height:18px;border:2px solid var(--border2);border-radius:5px;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all 0.12s;background:var(--bg)}
+.pt-check-item:has(input:checked) .pt-check-box{background:var(--verde);border-color:var(--verde)}
+.pt-check-item:has(input:checked) .pt-check-box::after{content:'';display:block;width:5px;height:9px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translateY(-1px)}
+.pt-check-text{font-size:12px;color:var(--text2);line-height:1.4}
+.pt-check-item:has(input:checked) .pt-check-text{color:var(--verde-dark);font-weight:600}
 .pt-history{padding:0 1.125rem 1rem}
 .pt-history-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;padding:0.5rem 0 0.375rem;border-top:1px solid var(--border)}
 .pt-hist-item{padding:0.75rem;background:var(--surface2);border-radius:8px;margin-bottom:6px;border:1px solid var(--border)}
@@ -598,21 +607,52 @@ select:focus{outline:none;border-color:var(--verde)}
         <p class="pt-section-title" style="font-size:14px;margin-bottom:0.25rem">✈ Briefing de Passagem</p>
         <p class="pt-section-hint" style="margin-bottom:0.875rem">Mucuri Norte · <span id="pt-conf-hora"></span></p>
 
-        <div class="pt-confirm-box" id="pt-conf-resumo"></div>
-
-        <p class="pt-section-title" style="margin-top:0.875rem">8 · Operador entrante</p>
-        <p class="pt-section-hint">Confirme o recebimento do briefing</p>
-        <input class="pt-input" id="pt-nome-entrante" type="text" placeholder="Nome completo ou matrícula" style="margin-bottom:0.75rem">
-
-        <div class="pt-sign-box">
-          <p>Ao tocar em <strong>Confirmar recebimento</strong>, o operador entrante declara ter recebido e compreendido o briefing do turno anterior.</p>
-          <span>Registro com data, hora e IP ficam salvos no sistema.</span>
+        <!-- resumo com scroll detectável -->
+        <div class="pt-confirm-box" id="pt-conf-resumo" style="max-height:180px;overflow-y:auto;position:relative"></div>
+        <div id="pt-scroll-hint" style="text-align:center;font-size:11px;color:var(--text3);padding:4px 0 6px;display:flex;align-items:center;justify-content:center;gap:4px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:12px;height:12px"><polyline points="6 9 12 15 18 9"/></svg>
+          Role até o fim para continuar
         </div>
 
-        <button class="btn-primary" id="pt-btn-confirmar" onclick="confirmarPassagem()" style="width:100%">
-          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
-          Confirmar recebimento
-        </button>
+        <!-- checkboxes — ocultos até scroll completo -->
+        <div id="pt-checks-area" style="display:none;margin-top:0.5rem">
+          <p class="pt-section-title" style="margin-bottom:0.625rem">8 · Operador entrante — confirme cada item</p>
+          <div class="pt-check-list">
+            <label class="pt-check-item" id="ptck-wrap-1">
+              <input type="checkbox" id="ptck-1" onchange="ptAvaliarChecks()">
+              <span class="pt-check-box"></span>
+              <span class="pt-check-text">Estou ciente da situação geral do turno</span>
+            </label>
+            <label class="pt-check-item" id="ptck-wrap-2">
+              <input type="checkbox" id="ptck-2" onchange="ptAvaliarChecks()">
+              <span class="pt-check-box"></span>
+              <span class="pt-check-text">Recebi informações sobre produção e equipamentos</span>
+            </label>
+            <label class="pt-check-item" id="ptck-wrap-3">
+              <input type="checkbox" id="ptck-3" onchange="ptAvaliarChecks()">
+              <span class="pt-check-box"></span>
+              <span class="pt-check-text">Fui informado sobre pendências e segurança</span>
+            </label>
+            <label class="pt-check-item" id="ptck-wrap-4">
+              <input type="checkbox" id="ptck-4" onchange="ptAvaliarChecks()">
+              <span class="pt-check-box"></span>
+              <span class="pt-check-text">Assumo a responsabilidade pelo turno a partir desta confirmação</span>
+            </label>
+          </div>
+
+          <p class="pt-label" style="margin-top:0.875rem">Nome ou matrícula</p>
+          <input class="pt-input" id="pt-nome-entrante" type="text" placeholder="Operador entrante" style="margin-bottom:0.75rem">
+
+          <div class="pt-sign-box">
+            <p>Esta confirmação tem valor de ciência formal do briefing. Data, hora e autoria ficam registrados no sistema.</p>
+          </div>
+
+          <button class="btn-primary" id="pt-btn-confirmar" onclick="confirmarPassagem()" style="width:100%" disabled>
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+            Confirmar recebimento
+          </button>
+        </div>
+
         <button class="btn-secondary" onclick="ptVoltarBriefing()" style="width:100%;margin-top:8px">← Editar briefing</button>
       </div>
     </div>
@@ -954,11 +994,48 @@ function ptIrParaConfirmacao(){
 
   document.getElementById('pt-conf-hora').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 
+  // reset estado da confirmação
+  [1,2,3,4].forEach(i=>{document.getElementById('ptck-'+i).checked=false;});
+  document.getElementById('pt-checks-area').style.display='none';
+  document.getElementById('pt-scroll-hint').style.display='flex';
+  document.getElementById('pt-btn-confirmar').disabled=true;
+  document.getElementById('pt-conf-resumo').scrollTop=0;
+
   document.getElementById('pt-tela-briefing').style.display='none';
   document.getElementById('pt-tela-confirmacao').style.display='block';
+  ptIniciarScrollWatch();
+}
+
+function ptIniciarScrollWatch(){
+  const box=document.getElementById('pt-conf-resumo');
+  const hint=document.getElementById('pt-scroll-hint');
+  const checks=document.getElementById('pt-checks-area');
+  // já está totalmente visível (conteúdo cabe sem scroll)?
+  function verificar(){
+    const scrollado=box.scrollTop+box.clientHeight>=box.scrollHeight-4;
+    if(scrollado){
+      hint.style.display='none';
+      checks.style.display='block';
+      box.removeEventListener('scroll',verificar);
+    }
+  }
+  // checagem inicial (caso caiba na tela sem precisar rolar)
+  setTimeout(verificar,100);
+  box.addEventListener('scroll',verificar);
+}
+
+function ptAvaliarChecks(){
+  const todos=[1,2,3,4].every(i=>document.getElementById('ptck-'+i).checked);
+  const btn=document.getElementById('pt-btn-confirmar');
+  btn.disabled=!todos;
 }
 
 function ptVoltarBriefing(){
+  // reseta checkboxes ao voltar
+  [1,2,3,4].forEach(i=>{document.getElementById('ptck-'+i).checked=false;});
+  document.getElementById('pt-checks-area').style.display='none';
+  document.getElementById('pt-scroll-hint').style.display='flex';
+  if(document.getElementById('pt-btn-confirmar'))document.getElementById('pt-btn-confirmar').disabled=true;
   document.getElementById('pt-tela-confirmacao').style.display='none';
   document.getElementById('pt-tela-briefing').style.display='block';
 }
