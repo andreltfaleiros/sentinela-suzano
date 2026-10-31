@@ -915,7 +915,8 @@ async function enviarReporte(){
       severidade:selSev||'Não informada',
       descricao:document.getElementById('descricao').value||null,
       anonimo:true,
-      psicossocial:selPsicoSim
+      psicossocial:selPsicoSim,
+      status_resposta:'pendente'
     };
     if(selPsicoSim){
       payload.psico_tipos=psicoData.psico_tipos||[];
@@ -926,7 +927,28 @@ async function enviarReporte(){
       payload.psico_impacto=psicoData.psico_impacto||null;
       payload.psico_anonimato_reforcado=psicoData.psico_anonimato_reforcado==='sim';
     }
-    await sb.from('reportes').insert(payload);
+    const{data:inserted}=await sb.from('reportes').insert(payload).select('id').single();
+
+    // Chama a API de triagem e resposta IA (não bloqueia o fluxo se falhar)
+    try{
+      const triagemResp=await fetch('/api/responder',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({...payload,id:inserted?.id})
+      });
+      if(triagemResp.ok&&inserted?.id){
+        const{triagem,resposta_texto}=await triagemResp.json();
+        await sb.from('reportes').update({
+          triagem_nivel:triagem.nivel,
+          triagem_fila:triagem.fila,
+          triagem_motivo:triagem.motivo,
+          palavras_flag:triagem.palavras_flag||[],
+          alerta_gestor:triagem.alerta_gestor||false,
+          resposta_texto:resposta_texto||null,
+          status_resposta:triagem.resposta_ia?'respondido':'aguarda_humano'
+        }).eq('id',inserted.id);
+      }
+    }catch(eIA){console.warn('Triagem/IA não disponível:',eIA.message);}
   }catch(e){console.error('Erro:',e);}
   // sempre avança — nunca trava o botão
   btn.disabled=false;
