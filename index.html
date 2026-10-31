@@ -270,6 +270,11 @@ select:focus{outline:none;border-color:var(--verde)}
 .feed-tag{background:var(--bg);border:1px solid var(--border);padding:2px 6px;border-radius:5px;font-size:10px;color:var(--text3);font-weight:500}
 .loading{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
 @media(max-width:600px){.kpi-grid{grid-template-columns:1fr 1fr}.panels{grid-template-columns:1fr}.screen{padding:1rem}}
+
+/* PSICOSSOCIAL NR-1 */
+.psico-chip{padding:5px 11px;border:1.5px solid var(--danger-border);border-radius:20px;background:#fff;cursor:pointer;font-size:11px;color:var(--danger);transition:all 0.12s;font-family:var(--font);line-height:1.4}
+.psico-chip:hover{background:var(--danger-bg);border-color:var(--danger)}
+.psico-chip.sel{background:var(--danger);color:#fff;border-color:var(--danger);font-weight:600}
 </style>
 </head>
 <body>
@@ -389,6 +394,96 @@ select:focus{outline:none;border-color:var(--verde)}
           <button class="cat-btn" onclick="toggleCat(this,'Falta de treinamento')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Falta de treinamento</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
           <button class="cat-btn" onclick="toggleCat(this,'Conflito de prioridades')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>Conflito de prioridades</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
           <button class="cat-btn" onclick="toggleCat(this,'Outro')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Outro</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></button>
+        </div>
+
+        <!-- NR-1 PSICOSSOCIAL -->
+        <p class="section-eyebrow" style="color:var(--danger);border-color:var(--danger-border)">Risco psicossocial — NR-1</p>
+        <div class="cats" style="margin-bottom:6px">
+          <button class="cat-btn" id="psi-nao-btn" onclick="togglePsico(this,false)" style="border-color:var(--border)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            <span>Não envolve</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </button>
+          <button class="cat-btn" id="psi-sim-btn" onclick="togglePsico(this,true)" style="border-color:var(--border)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            <span>Sim, envolve risco psicossocial</span><div class="checkmark"><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+          </button>
+        </div>
+
+        <!-- BLOCO EXPANDÍVEL NR-1 -->
+        <div id="psico-bloco" style="display:none;background:var(--danger-bg);border:1.5px solid var(--danger-border);border-radius:12px;padding:0.875rem;margin-bottom:0.75rem">
+
+          <p style="font-size:11px;font-weight:700;color:var(--danger);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.75rem">
+            Detalhamento NR-1 · Portaria 1.419/2024
+          </p>
+
+          <!-- 1. Tipo -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Qual tipo de risco psicossocial?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem" id="psico-tipo-group">
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Sobrecarga / pressão excessiva')">Sobrecarga / pressão excessiva</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Assédio moral')">Assédio moral</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Assédio sexual')">Assédio sexual</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Conflito com colega / equipe')">Conflito com colega / equipe</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Conflito com liderança')">Conflito com liderança</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Falta de suporte ou reconhecimento')">Falta de suporte / reconhecimento</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Medo de punição por erros')">Medo de punição por erros</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Isolamento ou exclusão')">Isolamento / exclusão</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Ameaça ou intimidação')">Ameaça / intimidação</button>
+            <button class="psico-chip" onclick="psicoChipMulti(this,'psico_tipos','Outro')">Outro</button>
+          </div>
+
+          <!-- 2. Frequência -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Com que frequência isso ocorre?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem" id="psico-freq-group">
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_frequencia','uma-vez')">Aconteceu uma vez</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_frequencia','as-vezes')">Acontece às vezes</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_frequencia','frequente')">Com frequência</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_frequencia','diario')">Todo dia</button>
+          </div>
+
+          <!-- 3. Envolvido identificável -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Envolve outra pessoa identificável?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.5rem" id="psico-envolvido-group">
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_tem_envolvido','nao');document.getElementById('psico-setor-wrap').style.display='none'">Não</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_tem_envolvido','sim');document.getElementById('psico-setor-wrap').style.display='block'">Sim</button>
+          </div>
+          <div id="psico-setor-wrap" style="display:none;margin-bottom:1rem">
+            <div id="psico-aviso-legal" style="background:#fff;border:1px solid var(--danger-border);border-radius:8px;padding:0.625rem;margin-bottom:0.625rem;font-size:11px;color:var(--danger);line-height:1.5">
+              <strong>Sua identidade permanece protegida.</strong> O setor ou função informado será usado exclusivamente para abertura de processo interno de apuração pelo RH/Compliance. Nenhuma ação imediata será tomada sem investigação prévia.
+            </div>
+            <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Setor ou função da pessoa envolvida <span style="font-weight:400">(não é obrigatório)</span></p>
+            <div style="display:flex;flex-wrap:wrap;gap:6px" id="psico-setor-group">
+              <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_setor_envolvido','Liderança direta / supervisor')">Liderança / supervisor</button>
+              <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_setor_envolvido','Colega de equipe')">Colega de equipe</button>
+              <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_setor_envolvido','Gerência / gestão')">Gerência</button>
+              <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_setor_envolvido','RH ou área de suporte')">RH / área de suporte</button>
+              <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_setor_envolvido','Prefiro não informar')">Prefiro não informar</button>
+            </div>
+          </div>
+
+          <!-- 4. Testemunhas -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Houve testemunhas?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem" id="psico-testemunha-group">
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_testemunhas','sim')">Sim</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_testemunhas','nao')">Não</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_testemunhas','nao-sei')">Não sei</button>
+          </div>
+
+          <!-- 5. Impacto -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Isso já afetou seu trabalho ou sua saúde?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem" id="psico-impacto-group">
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_impacto','sim')">Sim</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_impacto','nao')">Não</button>
+          </div>
+
+          <!-- 6. Anonimato reforçado -->
+          <p style="font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px">Deseja reforço de anonimato?</p>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.5rem" id="psico-anon-group">
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_anonimato_reforcado','sim');document.getElementById('psico-anon-aviso').style.display='block'">Sim, quero anonimato total</button>
+            <button class="psico-chip psico-unico" onclick="psicoChipUnico(this,'psico_anonimato_reforcado','nao');document.getElementById('psico-anon-aviso').style.display='none'">Não é necessário</button>
+          </div>
+          <div id="psico-anon-aviso" style="display:none;background:#fff;border:1px solid var(--verde-border);border-radius:8px;padding:0.625rem;font-size:11px;color:var(--verde-dark);line-height:1.5;margin-top:4px">
+            Este reporte será tratado exclusivamente pela gestão de RH/Compliance, sem identificação do seu nome em nenhuma etapa do processo.
+          </div>
         </div>
 
         <div class="tags-row" id="tags-row"></div>
@@ -752,13 +847,52 @@ async function loadMural(){
   if(el2)el2.textContent=n||'—';
 }
 
-var selCats=[],selSev='';
+var selCats=[],selSev='',selPsicoSim=false,psicoData={psico_tipos:[]};
+
+function togglePsico(btn,sim){
+  document.getElementById('psi-nao-btn').classList.remove('sel');
+  document.getElementById('psi-sim-btn').classList.remove('sel');
+  btn.classList.add('sel');
+  selPsicoSim=sim;
+  document.getElementById('psico-bloco').style.display=sim?'block':'none';
+  // adiciona/remove tag "Risco psicossocial" das categorias
+  if(sim){
+    if(!selCats.includes('Risco psicossocial'))selCats.push('Risco psicossocial');
+  }else{
+    selCats=selCats.filter(c=>c!=='Risco psicossocial');
+    // reseta dados psicossociais
+    psicoData={psico_tipos:[]};
+    document.querySelectorAll('.psico-chip').forEach(b=>b.classList.remove('sel'));
+    document.getElementById('psico-setor-wrap').style.display='none';
+    document.getElementById('psico-anon-aviso').style.display='none';
+  }
+  document.getElementById('btn-next1').disabled=selCats.length===0;
+  document.getElementById('tags-row').innerHTML=selCats.map(c=>'<span class="tag"'+(c==='Risco psicossocial'?' style="background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border)"':'')+'>'+c+'</span>').join('');
+}
+
+function psicoChipMulti(btn,campo,val){
+  // toggle: múltipla seleção
+  btn.classList.toggle('sel');
+  if(!psicoData[campo])psicoData[campo]=[];
+  if(btn.classList.contains('sel')){
+    if(!psicoData[campo].includes(val))psicoData[campo].push(val);
+  }else{
+    psicoData[campo]=psicoData[campo].filter(v=>v!==val);
+  }
+}
+
+function psicoChipUnico(btn,campo,val){
+  // único: deseleciona os do mesmo grupo
+  btn.closest('[id]').querySelectorAll('.psico-chip').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  psicoData[campo]=val;
+}
 function toggleCat(btn,name){
   btn.classList.toggle('sel');
   if(btn.classList.contains('sel')){if(!selCats.includes(name))selCats.push(name);}
   else{selCats=selCats.filter(c=>c!==name);}
   document.getElementById('btn-next1').disabled=selCats.length===0;
-  document.getElementById('tags-row').innerHTML=selCats.map(c=>'<span class="tag">'+c+'</span>').join('');
+  document.getElementById('tags-row').innerHTML=selCats.map(c=>'<span class="tag"'+(c==='Risco psicossocial'?' style="background:var(--danger-bg);color:var(--danger);border-color:var(--danger-border)"':'')+'>'+c+'</span>').join('');
 }
 function selectSev(btn,val){
   document.querySelectorAll('.sev-btn').forEach(b=>b.classList.remove('sel'));
@@ -774,14 +908,25 @@ async function enviarReporte(){
   btn.disabled=true;
   btn.innerHTML='Enviando...';
   try{
-    await sb.from('reportes').insert({
+    const payload={
       area:'florestal',
       unidade:'Mucuri Norte',
       categorias:selCats,
       severidade:selSev||'Não informada',
       descricao:document.getElementById('descricao').value||null,
-      anonimo:true
-    });
+      anonimo:true,
+      psicossocial:selPsicoSim
+    };
+    if(selPsicoSim){
+      payload.psico_tipos=psicoData.psico_tipos||[];
+      payload.psico_frequencia=psicoData.psico_frequencia||null;
+      payload.psico_tem_envolvido=psicoData.psico_tem_envolvido||null;
+      payload.psico_setor_envolvido=psicoData.psico_setor_envolvido||null;
+      payload.psico_testemunhas=psicoData.psico_testemunhas||null;
+      payload.psico_impacto=psicoData.psico_impacto||null;
+      payload.psico_anonimato_reforcado=psicoData.psico_anonimato_reforcado==='sim';
+    }
+    await sb.from('reportes').insert(payload);
   }catch(e){console.error('Erro:',e);}
   // sempre avança — nunca trava o botão
   btn.disabled=false;
@@ -789,9 +934,15 @@ async function enviarReporte(){
   goStep(3);
 }
 function resetOp(){
-  selCats=[];selSev='';
+  selCats=[];selSev='';selPsicoSim=false;psicoData={psico_tipos:[]};
   document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('sel'));
   document.querySelectorAll('.sev-btn').forEach(b=>b.classList.remove('sel'));
+  document.querySelectorAll('.psico-chip').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('psi-nao-btn').classList.remove('sel');
+  document.getElementById('psi-sim-btn').classList.remove('sel');
+  document.getElementById('psico-bloco').style.display='none';
+  document.getElementById('psico-setor-wrap').style.display='none';
+  document.getElementById('psico-anon-aviso').style.display='none';
   document.getElementById('btn-next1').disabled=true;
   document.getElementById('tags-row').innerHTML='';
   document.getElementById('descricao').value='';
