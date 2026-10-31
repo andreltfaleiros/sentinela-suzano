@@ -931,14 +931,18 @@ async function enviarReporte(){
 
     // Chama a API de triagem e resposta IA (não bloqueia o fluxo se falhar)
     try{
+      console.log('[SENTINELA] inserted id:', inserted?.id);
       const triagemResp=await fetch('/api/responder',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({...payload,id:inserted?.id})
       });
+      console.log('[SENTINELA] triagem status:', triagemResp.status);
       if(triagemResp.ok&&inserted?.id){
-        const{triagem,resposta_texto}=await triagemResp.json();
-        await sb.from('reportes').update({
+        const respJson=await triagemResp.json();
+        console.log('[SENTINELA] triagem json:', JSON.stringify(respJson));
+        const{triagem,resposta_texto}=respJson;
+        const{error:updErr}=await sb.from('reportes').update({
           triagem_nivel:triagem.nivel,
           triagem_fila:triagem.fila,
           triagem_motivo:triagem.motivo,
@@ -947,8 +951,13 @@ async function enviarReporte(){
           resposta_texto:resposta_texto||null,
           status_resposta:triagem.resposta_ia?'respondido':'aguarda_humano'
         }).eq('id',inserted.id);
+        if(updErr) console.error('[SENTINELA] update error:', updErr);
+        else console.log('[SENTINELA] triagem salva com sucesso');
+      }else{
+        const errText=await triagemResp.text();
+        console.error('[SENTINELA] triagem falhou:', triagemResp.status, errText);
       }
-    }catch(eIA){console.warn('Triagem/IA não disponível:',eIA.message);}
+    }catch(eIA){console.error('[SENTINELA] Triagem/IA erro:', eIA.message);}
   }catch(e){console.error('Erro:',e);}
   // sempre avança — nunca trava o botão
   btn.disabled=false;
