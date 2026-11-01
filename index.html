@@ -305,6 +305,10 @@ select:focus{outline:none;border-color:var(--verde)}
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
     Painel executivo
   </button>
+  <button class="nav-btn" onclick="mostrarConsulta()">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Meu protocolo
+  </button>
 </nav>
 
 <!-- OPERADOR -->
@@ -360,6 +364,10 @@ select:focus{outline:none;border-color:var(--verde)}
         <button class="btn-mural" onclick="goStep(1)">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Fazer um reporte
+        </button>
+        <button onclick="mostrarConsulta()" style="width:100%;padding:10px;background:none;border:1.5px solid var(--border);border-radius:10px;font-size:12px;color:var(--text3);cursor:pointer;font-family:var(--font);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:6px">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Já tem um protocolo? Consulte a resposta aqui
         </button>
       </div>
     </div>
