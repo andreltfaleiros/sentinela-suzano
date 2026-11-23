@@ -4,19 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SENTINELA — Gestão de Risco Operacional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
   --verde:#2D6A4F;--verde-dark:#1B4332;--verde-light:#52B788;--verde-bg:#D8F3DC;--verde-border:#95D5B2;
   --ambar:#D4A017;--ambar-bg:#FFF8E7;--ambar-border:#F9C74F;
-  --bg:#F8FAF8;--surface:#ffffff;--surface2:#F0F7F0;
+  --bg:#F6F8F6;--surface:#ffffff;--surface2:#EEF5EE;
   --border:#DDE8DD;--border2:#B7D4B7;
   --text:#1A2E1A;--text2:#3D5A3E;--text3:#7A9E7A;
   --danger:#C1121F;--danger-bg:#FFF0F0;--danger-border:#FFCCD5;
   --success:#2D6A4F;--success-bg:#D8F3DC;--success-border:#95D5B2;
   --warning:#D4A017;--warning-bg:#FFF8E7;--warning-border:#F9C74F;
-  --radius:10px;--font:system-ui,-apple-system,sans-serif
+  --radius:10px;--font:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif
 }
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
 
@@ -136,10 +139,10 @@ textarea::placeholder{color:var(--text3)}
 .ck-progress-label{font-size:11px;color:var(--text3);margin-top:4px;text-align:right}
 .ck-section{padding:0.875rem 1.125rem 0}
 .ck-section-title{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem;padding-bottom:4px;border-bottom:1px solid var(--border)}
-.ck-item{display:flex;align-items:center;gap:10px;padding:0.625rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
+.ck-item{display:flex;align-items:center;gap:12px;padding:0.75rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.1s}
 .ck-item:last-child{border-bottom:none}
 .ck-item:hover{background:var(--surface2);margin:0 -1.125rem;padding-left:1.125rem;padding-right:1.125rem}
-.ck-box{width:20px;height:20px;border:2px solid var(--border2);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.ck-box{width:24px;height:24px;min-width:24px;border:2px solid var(--border2);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
 .ck-box.checked{background:var(--verde);border-color:var(--verde)}
 .ck-box.checked svg{display:block}
 .ck-box svg{display:none;width:12px;height:12px;color:#fff}
@@ -228,10 +231,12 @@ select:focus{outline:none;border-color:var(--verde)}
 .filter-reset{padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;background:none;color:var(--text3);font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px}
 .filter-reset svg{width:11px;height:11px}
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.125rem}
-.kpi{background:var(--surface);border-radius:12px;padding:1rem;border:1px solid var(--border)}
-.kpi-val{font-size:24px;font-weight:700;color:var(--verde-dark)}
-.kpi-label{font-size:11px;color:var(--text3);margin-top:3px;font-weight:500}
-.kpi-delta{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:3px;font-weight:500}
+.kpi{background:var(--surface);border-radius:12px;padding:1rem 1rem 0.875rem;border:1px solid var(--border);border-top:3px solid var(--verde-light);position:relative;overflow:hidden}
+.kpi.kpi-alert{border-top-color:var(--danger)}
+.kpi.kpi-warn{border-top-color:var(--ambar)}
+.kpi-val{font-size:28px;font-weight:800;color:var(--verde-dark);letter-spacing:-0.02em;line-height:1}
+.kpi-label{font-size:11px;color:var(--text3);margin-top:5px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em}
+.kpi-delta{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:3px;font-weight:600}
 .delta-up{color:var(--verde)}.delta-down{color:var(--danger)}
 .panels{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.125rem}
@@ -847,7 +852,7 @@ select:focus{outline:none;border-color:var(--verde)}
   <div class="kpi-grid">
     <div class="kpi"><div class="kpi-val" id="k-total">—</div><div class="kpi-label">Reportes no período</div><div class="kpi-delta delta-up" id="k-d1">↑ Dados reais</div></div>
     <div class="kpi"><div class="kpi-val" id="k-anon">—</div><div class="kpi-label">Identidade protegida</div><div class="kpi-delta delta-up">↑ Cultura de confiança</div></div>
-    <div class="kpi"><div class="kpi-val" id="k-alta">—</div><div class="kpi-label">Severidade alta</div><div class="kpi-delta delta-down" id="k-d2"></div></div>
+    <div class="kpi kpi-alert" id="kpi-alta-card"><div class="kpi-val" id="k-alta">—</div><div class="kpi-label">Severidade alta</div><div class="kpi-delta delta-down" id="k-d2"></div></div>
     <div class="kpi"><div class="kpi-val" id="k-areas">—</div><div class="kpi-label">Áreas reportando</div><div class="kpi-delta delta-up">↑ Cobertura operacional</div></div>
   </div>
   <div class="panels">
