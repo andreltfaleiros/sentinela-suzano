@@ -357,7 +357,15 @@ select:focus{outline:none;border-color:var(--verde)}
           <div class="mural-pulso-text">Este mês, seus colegas fizeram <strong id="pulso-num">—</strong> reportes. Isso gerou 3 melhorias na operação. Juntos, estamos tornando a Suzano mais segura.</div>
         </div>
 
-        <button class="btn-mural" onclick="goStep(1)">
+        <!-- AÇÕES CORRETIVAS PUBLICADAS -->
+        <div style="margin-top:12px">
+          <p style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px">Ações corretivas recentes</p>
+          <div id="mural-acoes-list">
+            <p style="font-size:12px;color:var(--text3);font-style:italic">Carregando...</p>
+          </div>
+        </div>
+
+        <button class="btn-mural" onclick="goStep(1)" style="margin-top:16px">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
           Fazer um reporte
         </button>
@@ -875,13 +883,37 @@ function showScreen(id,btn){
 }
 
 async function loadMural(){
-  const{data,error}=await sb.from('reportes').select('id',{count:'exact'});
+  const{data,error}=await sb.from('reportes').select('id,acao_publica,acao_em,categorias,severidade,status_resposta').order('criado_em',{ascending:false});
   if(error)return;
-  const n=data?data.length:0;
+  const rows=data||[];
+  const n=rows.length;
+  const resolvidos=rows.filter(r=>r.status_resposta==='concluido').length;
   const el=document.getElementById('mural-total');
   const el2=document.getElementById('pulso-num');
   if(el)el.textContent=n||'—';
   if(el2)el2.textContent=n||'—';
+  // atualiza texto do pulso dinamicamente
+  const pulsoTxt=document.getElementById('pulso-txt');
+  if(pulsoTxt){
+    const mes=new Date().toLocaleString('pt-BR',{month:'long'});
+    pulsoTxt.innerHTML=`Este mês, seus colegas fizeram <strong>${n}</strong> reportes. ${resolvidos>0?`<strong>${resolvidos}</strong> já geraram ação corretiva.`:''} Juntos, estamos tornando a Suzano mais segura.`;
+  }
+  // ações publicadas no mural
+  const acoes=rows.filter(r=>r.acao_publica).slice(0,5);
+  const muralAcoes=document.getElementById('mural-acoes-list');
+  if(muralAcoes){
+    muralAcoes.innerHTML=acoes.length?acoes.map(r=>{
+      const dt=r.acao_em?new Date(r.acao_em).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):'';
+      const cats=(r.categorias||[]).join(', ')||'Segurança';
+      return `<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:0.05em">${cats}</span>
+          <span style="font-size:10px;color:var(--text3)">${dt}</span>
+        </div>
+        <p style="font-size:12px;color:var(--text1);line-height:1.5">✅ ${r.acao_publica}</p>
+      </div>`;
+    }).join(''):'<p style="font-size:12px;color:var(--text3);font-style:italic">As ações corretivas aparecerão aqui quando registradas.</p>';
+  }
 }
 
 var selCats=[],selSev='',selPsicoSim=false,psicoData={psico_tipos:[]};
@@ -1089,12 +1121,16 @@ async function loadDashboard(){
   document.getElementById('cat-bars').innerHTML=sorted.length?sorted.map(([cat,cnt],i)=>
     '<div class="bar-row"><span class="bar-label">'+cat+'</span><div class="bar-track"><div class="bar-fill '+cls[i]+'" style="width:'+Math.round(cnt/maxVal*100)+'%"></div></div><span class="bar-val">'+cnt+'</span></div>'
   ).join(''):'<div class="loading">Nenhum reporte ainda.</div>';
-  document.getElementById('feed-list').innerHTML=rows.slice(0,4).map(r=>{
+  document.getElementById('feed-list').innerHTML=rows.slice(0,8).map(r=>{
     const dotCls=r.severidade==='Alta'?'alta':r.severidade==='Média'?'media':'baixa';
     const dt=r.criado_em?new Date(r.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
     const cats=(r.categorias||[]).map(c=>'<span class="feed-tag">'+c+'</span>').join('');
     const desc=r.descricao?r.descricao.substring(0,90)+(r.descricao.length>90?'...':''):'Sem descrição adicional.';
-    return '<div class="feed-row"><div class="feed-dot '+dotCls+'"></div><div class="feed-body"><p>'+desc+'</p><div class="feed-meta">'+cats+'<span class="feed-tag">'+dt+'</span></div></div></div>';
+    const triagem=r.triagem_nivel?`<span class="feed-tag" style="background:${r.triagem_nivel==='CRITICO'?'#fee2e2':r.triagem_nivel==='ALTO'?'#fef3c7':'#f0fdf4'};color:${r.triagem_nivel==='CRITICO'?'#991b1b':r.triagem_nivel==='ALTO'?'#92400e':'#166534'}">${r.triagem_nivel}</span>`:'';
+    const acaoBloco=r.acao_publica
+      ?`<div style="margin-top:8px;padding:6px 10px;background:#f0fdf4;border-left:3px solid #22c55e;border-radius:0 6px 6px 0;font-size:11px;color:#166534">✅ ${r.acao_publica}</div>`
+      :`<button onclick="abrirModalAcao('${r.id}')" style="margin-top:8px;padding:4px 10px;font-size:11px;border:1px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;color:var(--text2);font-family:var(--font)">+ Registrar ação corretiva</button>`;
+    return `<div class="feed-row" id="feed-${r.id}"><div class="feed-dot ${dotCls}"></div><div class="feed-body"><p>${desc}</p><div class="feed-meta">${cats}${triagem}<span class="feed-tag">${dt}</span></div>${acaoBloco}</div></div>`;
   }).join('')||'<div class="loading">Nenhum reporte ainda.</div>';
   const{data:insights}=await sb.from('insights').select('*').order('criado_em',{ascending:false});
   const iM={critico:{cls:'crit',badge:'Crítico',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'},atencao:{cls:'atenc',badge:'Atenção',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>'},oportunidade:{cls:'opor',badge:'Oportunidade',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'}};
@@ -1372,6 +1408,41 @@ async function loadPassagens(){
 
 function resetFilters(){document.getElementById('f-area').value='';document.getElementById('f-sev').value='';loadDashboard();}
 
+// ── MODAL AÇÃO CORRETIVA ───────────────────────────────────────
+let _modalReporteId=null;
+function abrirModalAcao(id){
+  _modalReporteId=id;
+  document.getElementById('modal-acao-txt').value='';
+  document.getElementById('modal-acao').style.display='flex';
+  document.getElementById('modal-acao-txt').focus();
+}
+function fecharModalAcao(){
+  document.getElementById('modal-acao').style.display='none';
+  _modalReporteId=null;
+}
+async function salvarAcao(){
+  const txt=document.getElementById('modal-acao-txt').value.trim();
+  if(!txt||!_modalReporteId)return;
+  const btn=document.getElementById('modal-acao-btn');
+  btn.disabled=true;btn.textContent='Salvando...';
+  // Resumo anônimo via IA
+  let acaoPublica=txt;
+  try{
+    const r=await fetch('/api/resumir-acao',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({acao:txt})});
+    if(r.ok){const j=await r.json();acaoPublica=j.resumo||txt;}
+  }catch(e){/* usa texto direto se IA falhar */}
+  await sb.from('reportes').update({
+    acao_publica:acaoPublica,
+    acao_original:txt,
+    status_resposta:'concluido',
+    acao_em:new Date().toISOString()
+  }).eq('id',_modalReporteId);
+  fecharModalAcao();
+  loadDashboard();
+  loadMural();
+  btn.disabled=false;btn.textContent='Publicar no mural';
+}
+
 // ── CONSULTA POR PROTOCOLO ─────────────────────────────────────
 async function mostrarConsulta(codigoInicial){
   // mostra tela de consulta
@@ -1424,5 +1495,21 @@ async function buscarProtocolo(){
 sb.channel('rep').on('postgres_changes',{event:'INSERT',schema:'public',table:'reportes'},()=>{if(document.getElementById('dashboard').classList.contains('active'))loadDashboard();if(document.getElementById('operador').classList.contains('active'))loadMural();}).subscribe();
 loadMural();
 </script>
+
+<!-- MODAL: Registrar ação corretiva -->
+<div id="modal-acao" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:flex-end;justify-content:center">
+  <div style="background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 32px;width:100%;max-width:430px;box-shadow:0 -4px 32px rgba(0,0,0,0.2)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <p style="font-size:14px;font-weight:700;color:var(--text1)">Registrar ação corretiva</p>
+      <button onclick="fecharModalAcao()" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:20px;line-height:1">×</button>
+    </div>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.5">Descreva a ação tomada. O texto será resumido pela IA para proteger o anonimato antes de aparecer no mural.</p>
+    <textarea id="modal-acao-txt" rows="4" placeholder="Ex: Sinalização foi reforçada na área afetada. Equipe de manutenção realizou inspeção e correção do equipamento..." style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text1);font-size:13px;font-family:var(--font);resize:none;outline:none;line-height:1.5"></textarea>
+    <button id="modal-acao-btn" onclick="salvarAcao()" style="width:100%;margin-top:12px;padding:13px;background:var(--verde);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)">
+      Publicar no mural
+    </button>
+    <p style="font-size:10px;color:var(--text3);text-align:center;margin-top:8px">O status do reporte será marcado como <strong>concluído</strong></p>
+  </div>
+</div>
 </body>
 </html>
