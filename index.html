@@ -34,6 +34,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 .nav-btn.active{color:#fff;border-bottom-color:var(--verde-light)}
 .nav-btn svg{width:14px;height:14px}
 
+/* OBSERVAÇÃO DE CAMPO — chips TEM */
+.obs-chip{padding:6px 12px;font-size:12px;font-weight:500;border:1.5px solid var(--border);border-radius:20px;background:var(--surface2);color:var(--text2);cursor:pointer;font-family:var(--font);transition:all 0.15s}
+.obs-chip.ativo{background:var(--verde-dark);color:#fff;border-color:var(--verde-dark)}
+.obs-chip:hover{border-color:var(--verde-medium)}
+
 /* SCREENS */
 .screen{display:none;padding:1.5rem;max-width:920px;margin:0 auto}
 .screen.active{display:block}
@@ -305,6 +310,10 @@ select:focus{outline:none;border-color:var(--verde)}
   <button class="nav-btn" onclick="showScreen('passagem',this)">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
     Passagem de Turno
+  </button>
+  <button class="nav-btn" onclick="showScreen('observacao',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Obs. de Campo
   </button>
   <button class="nav-btn" onclick="showScreen('dashboard',this)">
     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
@@ -825,6 +834,129 @@ select:focus{outline:none;border-color:var(--verde)}
   </div>
 </div>
 
+<!-- OBSERVAÇÃO DE CAMPO (Pacote 3.5) — Acesso restrito ao auditor VOOS -->
+<div id="observacao" class="screen">
+<div style="max-width:600px;margin:0 auto">
+
+  <!-- AUTENTICAÇÃO DO AUDITOR -->
+  <div id="obs-login" style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:1rem">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:36px;height:36px;background:var(--verde-dark);border-radius:9px;display:flex;align-items:center;justify-content:center">
+        <svg fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div>
+        <p style="font-size:14px;font-weight:700;color:var(--text)">Observação de Campo · VOOS</p>
+        <p style="font-size:11px;color:var(--text3)">Acesso restrito — auditor credenciado</p>
+      </div>
+    </div>
+    <div id="obs-login-form">
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Esta área é exclusiva para auditores do programa VOOS. Informe a senha de acesso.</p>
+      <input id="obs-senha" type="password" placeholder="Senha do auditor" style="width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none;margin-bottom:10px"
+        onkeydown="if(event.key==='Enter')autenticarAuditor()">
+      <button onclick="autenticarAuditor()" style="width:100%;padding:12px;background:var(--verde-dark);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font)">Entrar</button>
+      <p id="obs-login-erro" style="font-size:11px;color:var(--danger);text-align:center;margin-top:8px;display:none">Senha incorreta.</p>
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO DE OBSERVAÇÃO (oculto até autenticar) -->
+  <div id="obs-formulario" style="display:none">
+    <!-- CABEÇALHO -->
+    <div style="background:var(--verde-dark);border-radius:16px;padding:16px 20px;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <p style="font-size:14px;font-weight:700;color:#fff">Observação de Campo</p>
+        <p style="font-size:11px;color:rgba(255,255,255,0.6)">Metodologia VOOS · inspirada na LOSA</p>
+      </div>
+      <button onclick="sairAuditor()" style="font-size:11px;padding:4px 10px;border:1px solid rgba(255,255,255,0.3);border-radius:6px;background:none;color:rgba(255,255,255,0.7);cursor:pointer;font-family:var(--font)">Sair</button>
+    </div>
+
+    <!-- CONTEXTO DA OBSERVAÇÃO -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Contexto da observação</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px">Área observada</p>
+          <select id="obs-area" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none">
+            <option value="">Selecione...</option>
+            <option>Operação florestal</option>
+            <option>Unidade industrial</option>
+            <option>Logística</option>
+            <option>Manutenção</option>
+            <option>Laboratório</option>
+            <option>Área administrativa</option>
+          </select>
+        </div>
+        <div>
+          <p style="font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px">Período do turno</p>
+          <select id="obs-turno" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);background:var(--surface);color:var(--text);outline:none">
+            <option value="">Selecione...</option>
+            <option>Manhã</option>
+            <option>Tarde</option>
+            <option>Noite</option>
+          </select>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text3);font-style:italic">Nota: dados individuais nunca são exibidos ao gestor. Apenas padrões agregados por área aparecem no painel.</p>
+    </div>
+
+    <!-- AMEAÇA IDENTIFICADA -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">1 · Ameaça identificada</p>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:12px">O que o ambiente apresentou como risco potencial?</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="obs-ameaca-chips">
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Equipamento ou instalação')">Equipamento / instalação</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Pressão de tempo ou meta')">Pressão de tempo / meta</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Comunicação deficiente')">Comunicação deficiente</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Ambiente físico adverso')">Ambiente físico adverso</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Procedimento inadequado')">Procedimento inadequado</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Fator humano / fadiga')">Fator humano / fadiga</button>
+        <button class="obs-chip" onclick="obsChip(this,'ameaca','Outra')">Outra</button>
+      </div>
+      <textarea id="obs-ameaca-desc" rows="2" placeholder="Descreva a ameaça observada (sem identificar pessoas)..." style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);resize:none;outline:none;background:var(--surface2);color:var(--text)"></textarea>
+    </div>
+
+    <!-- RESPOSTA DO OPERADOR -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">2 · Resposta do operador</p>
+      <p style="font-size:11px;color:var(--text3);margin-bottom:12px">Como o operador respondeu à ameaça?</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px" id="obs-resposta-chips">
+        <button class="obs-chip" onclick="obsChipUnico(this,'resposta','adequada')">✓ Adequada — gerenciou bem</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'resposta','parcial')">⚠ Parcial — poderia melhorar</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'resposta','inadequada')">✗ Inadequada — não gerenciou</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'resposta','nao_aplicavel')">— Não se aplicou</button>
+      </div>
+    </div>
+
+    <!-- ERRO -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px">3 · Ocorreu erro?</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="obs-erro-chips">
+        <button class="obs-chip" onclick="obsChipUnico(this,'erro','nao')">Não</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'erro','sim_corrigido')">Sim — corrigido a tempo</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'erro','sim_nao_corrigido')">Sim — não corrigido</button>
+        <button class="obs-chip" onclick="obsChipUnico(this,'erro','sim_consequencia')">Sim — gerou consequência</button>
+      </div>
+    </div>
+
+    <!-- OBSERVAÇÃO LIVRE -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:1rem">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px">4 · Observação livre</p>
+      <textarea id="obs-livre" rows="3" placeholder="Contexto adicional, padrão percebido, recomendação..." style="width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-family:var(--font);resize:none;outline:none;background:var(--surface2);color:var(--text)"></textarea>
+    </div>
+
+    <button onclick="salvarObservacao()" id="btn-salvar-obs" style="width:100%;padding:14px;background:var(--verde-dark);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);margin-bottom:1rem">
+      Registrar observação
+    </button>
+
+    <!-- HISTÓRICO DE OBSERVAÇÕES (agregado, sem identificação) -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px">
+      <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Observações registradas</p>
+      <div id="obs-historico"><div class="loading">Carregando...</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
 <div id="dashboard" class="screen">
   <div class="dash-top">
     <div>
@@ -850,7 +982,7 @@ select:focus{outline:none;border-color:var(--verde)}
     <button class="filter-reset" onclick="resetFilters()"><svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Limpar</button>
   </div>
   <div class="kpi-grid">
-    <div class="kpi"><div class="kpi-val" id="k-total">—</div><div class="kpi-label">Reportes no período</div><div class="kpi-delta delta-up" id="k-d1">↑ Dados reais</div></div>
+    <div class="kpi"><div class="kpi-val" id="k-total">—</div><div class="kpi-label">Reportes no período</div><div class="kpi-delta delta-up" id="k-d1">↑ Dados reais</div><div id="k-total-trend"></div></div>
     <div class="kpi"><div class="kpi-val" id="k-anon">—</div><div class="kpi-label">Identidade protegida</div><div class="kpi-delta delta-up">↑ Cultura de confiança</div></div>
     <div class="kpi kpi-alert" id="kpi-alta-card"><div class="kpi-val" id="k-alta">—</div><div class="kpi-label">Severidade alta</div><div class="kpi-delta delta-down" id="k-d2"></div></div>
     <div class="kpi"><div class="kpi-val" id="k-areas">—</div><div class="kpi-label">Áreas reportando</div><div class="kpi-delta delta-up">↑ Cobertura operacional</div></div>
@@ -865,9 +997,24 @@ select:focus{outline:none;border-color:var(--verde)}
       <div id="feed-list"><div class="loading">Carregando...</div></div>
     </div>
   </div>
+  <!-- ALERTAS DE PADRÃO (Pacote 3.1) -->
+  <div id="alertas-padrao"></div>
+
   <div class="full-panel">
     <div class="panel-title">Inteligência de padrões <span class="panel-sub">gerada por IA · atualizada automaticamente</span></div>
     <div id="insights-list"><div class="loading">Carregando...</div></div>
+  </div>
+
+  <!-- RELATÓRIO MENSAL (Pacote 3.3 / 3.4) -->
+  <div class="full-panel" id="relatorio-mensal-panel" style="display:none">
+    <div class="panel-title">
+      Relatório mensal
+      <div style="display:flex;gap:8px">
+        <span class="panel-sub" id="relatorio-mes-label">—</span>
+        <button onclick="gerarDeck()" id="btn-deck" style="font-size:11px;font-weight:600;padding:3px 10px;border:1.5px solid var(--verde);border-radius:6px;background:none;color:var(--verde);cursor:pointer;font-family:var(--font)">🎯 Gerar deck</button>
+      </div>
+    </div>
+    <div id="relatorio-conteudo"><div class="loading">Carregando relatório...</div></div>
   </div>
 </div>
 
@@ -1111,13 +1258,52 @@ async function loadDashboard(){
   const anon=rows.filter(r=>r.anonimo).length;
   const alta=rows.filter(r=>r.severidade==='Alta').length;
   const areas=[...new Set(rows.map(r=>r.area).filter(Boolean))].length;
+
+  // ── TENDÊNCIA SEMANAL ─────────────────────────────────────────
+  const agora=new Date();
+  const inicioSemanaAtual=new Date(agora);inicioSemanaAtual.setDate(agora.getDate()-7);
+  const inicioSemanaAnterior=new Date(agora);inicioSemanaAnterior.setDate(agora.getDate()-14);
+  const semAtual=rows.filter(r=>r.criado_em&&new Date(r.criado_em)>=inicioSemanaAtual).length;
+  const semAnterior=rows.filter(r=>r.criado_em&&new Date(r.criado_em)>=inicioSemanaAnterior&&new Date(r.criado_em)<inicioSemanaAtual).length;
+  const tendDiff=semAtual-semAnterior;
+  const tendPct=semAnterior>0?Math.abs(Math.round(tendDiff/semAnterior*100)):null;
+  const tendHTML=tendPct!==null
+    ?`<span style="font-size:10px;font-weight:600;color:${tendDiff>0?'var(--danger)':tendDiff<0?'var(--verde)':'var(--text3)'};margin-left:4px">${tendDiff>0?'↑':'↓'} ${tendPct}% vs sem. ant.</span>`
+    :'';
+
   document.getElementById('k-total').textContent=total||'0';
+  document.getElementById('k-total-trend').innerHTML=tendHTML;
   document.getElementById('k-anon').textContent=total>0?Math.round(anon/total*100)+'%':'0%';
   document.getElementById('k-alta').textContent=alta||'0';
   document.getElementById('k-d2').textContent=alta>0?alta+' requer atenção':'Nenhum crítico';
   document.getElementById('k-areas').textContent=areas||'0';
   const aL={'':`Toda a empresa`,'florestal':'Op. florestal','industrial':'Unid. industriais','logistica':'Logística'};
   document.getElementById('dash-sub').textContent=(aL[area]||'Toda a empresa')+' · Atualizado agora';
+
+  // ── ALERTAS DE PADRÃO (3+ da mesma categoria em 7 dias) ───────
+  const h7=new Date(agora);h7.setDate(agora.getDate()-7);
+  const recentes=rows.filter(r=>r.criado_em&&new Date(r.criado_em)>=h7);
+  const catCount7={};
+  recentes.forEach(r=>(r.categorias||[]).forEach(c=>{catCount7[c]=(catCount7[c]||0)+1;}));
+  const alertas=Object.entries(catCount7).filter(([,n])=>n>=3).sort((a,b)=>b[1]-a[1]);
+  const alertaEl=document.getElementById('alertas-padrao');
+  if(alertas.length){
+    alertaEl.innerHTML=`
+      <div style="background:#FFF0F0;border:1.5px solid #FFCCD5;border-radius:12px;padding:14px 16px;margin-bottom:1.25rem">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <svg fill="none" stroke="#C1121F" stroke-width="2.5" viewBox="0 0 24 24" style="width:16px;height:16px;flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="font-size:12px;font-weight:700;color:#C1121F;text-transform:uppercase;letter-spacing:0.06em">Padrão detectado — últimos 7 dias</span>
+        </div>
+        ${alertas.map(([cat,n])=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,0.7);border-radius:8px;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:600;color:#1A2E1A">${cat}</span>
+            <span style="font-size:12px;font-weight:800;color:#C1121F">${n}× reportado</span>
+          </div>`).join('')}
+        <p style="font-size:11px;color:#C1121F;margin-top:8px;line-height:1.5">Atenção: repetição acima de 3 reportes indica problema sistêmico. Recomenda-se ação corretiva estrutural.</p>
+      </div>`;
+  }else{
+    alertaEl.innerHTML='';
+  }
   const catCount={};
   rows.forEach(r=>{(r.categorias||[]).forEach(c=>{catCount[c]=(catCount[c]||0)+1;});});
   const sorted=Object.entries(catCount).sort((a,b)=>b[1]-a[1]).slice(0,6);
@@ -1140,6 +1326,8 @@ async function loadDashboard(){
   const{data:insights}=await sb.from('insights').select('*').order('criado_em',{ascending:false});
   const iM={critico:{cls:'crit',badge:'Crítico',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>'},atencao:{cls:'atenc',badge:'Atenção',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>'},oportunidade:{cls:'opor',badge:'Oportunidade',icon:'<svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>'}};
   document.getElementById('insights-list').innerHTML=(insights&&insights.length)?insights.map(ins=>{const m=iM[ins.tipo]||iM.atencao;return'<div class="insight-row"><div class="ins-icon '+m.cls+'">'+m.icon+'</div><div class="ins-body"><p>'+ins.texto+'</p><span>'+new Date(ins.criado_em).toLocaleDateString('pt-BR')+'</span></div><span class="ins-badge '+m.cls+'">'+m.badge+'</span></div>';}).join(''):'<div class="loading">Nenhum insight gerado ainda.</div>';
+  // Carrega relatório mensal ao abrir o painel
+  carregarRelatorioMensal();
 }
 /* ===== CHECKLIST ===== */
 const CK_ITEMS = {
@@ -1499,6 +1687,219 @@ async function buscarProtocolo(){
 
 sb.channel('rep').on('postgres_changes',{event:'INSERT',schema:'public',table:'reportes'},()=>{if(document.getElementById('dashboard').classList.contains('active'))loadDashboard();if(document.getElementById('operador').classList.contains('active'))loadMural();}).subscribe();
 loadMural();
+
+// ── RELATÓRIO MENSAL (Pacote 3.3) ─────────────────────────────
+async function carregarRelatorioMensal(){
+  // Busca o relatório mais recente na tabela relatorios_mensais
+  const{data:rel}=await sb.from('relatorios_mensais').select('*').order('criado_em',{ascending:false}).limit(1).maybeSingle();
+  const panel=document.getElementById('relatorio-mensal-panel');
+  if(!rel){
+    // Se não há relatório gerado ainda, mostra opção manual
+    panel.style.display='block';
+    document.getElementById('relatorio-mes-label').textContent='Nenhum gerado ainda';
+    document.getElementById('relatorio-conteudo').innerHTML=`
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">O relatório é gerado automaticamente no primeiro dia útil de cada mês. Você pode gerar manualmente abaixo.</p>
+      <button onclick="gerarRelatorioManual()" style="font-size:12px;font-weight:600;padding:8px 16px;border:1.5px solid var(--verde);border-radius:8px;background:none;color:var(--verde);cursor:pointer;font-family:var(--font)">Gerar relatório do mês anterior</button>`;
+    return;
+  }
+  panel.style.display='block';
+  const mesRef=rel.mes_referencia||'—';
+  document.getElementById('relatorio-mes-label').textContent=mesRef;
+  const r=rel.dados||{};
+  document.getElementById('relatorio-conteudo').innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--verde-dark)">${r.total||0}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:0.04em">Total de reportes</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:${r.alta>0?'var(--danger)':'var(--verde-dark)'}">${r.alta||0}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:0.04em">Severidade alta</div>
+      </div>
+      <div style="background:var(--surface2);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:24px;font-weight:800;color:var(--verde-dark)">${r.com_acao||0}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:3px;text-transform:uppercase;letter-spacing:0.04em">Com ação corretiva</div>
+      </div>
+    </div>
+    ${r.top_categoria?`<div style="padding:10px 12px;background:var(--ambar-bg);border:1px solid var(--ambar-border);border-radius:8px;font-size:12px;color:var(--text2);margin-bottom:10px"><strong>Categoria mais reportada:</strong> ${r.top_categoria} (${r.top_categoria_n}×)</div>`:''}
+    ${r.resumo_ia?`<div style="padding:12px 14px;background:var(--surface2);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.6"><strong style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--text3);margin-bottom:6px">Análise IA</strong>${r.resumo_ia}</div>`:''}
+    <p style="font-size:10px;color:var(--text3);margin-top:10px">Gerado em: ${new Date(rel.criado_em).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</p>`;
+}
+
+async function gerarRelatorioManual(){
+  const btn=event.target;
+  btn.disabled=true;btn.textContent='Gerando...';
+  try{
+    const resp=await fetch('/api/gerar-relatorio',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({manual:true})});
+    if(resp.ok){
+      btn.textContent='✓ Gerado!';
+      setTimeout(()=>carregarRelatorioMensal(),1000);
+    }else{btn.disabled=false;btn.textContent='Tentar novamente';}
+  }catch(e){btn.disabled=false;btn.textContent='Erro — tentar novamente';}
+}
+
+// ── DECK MENSAL IA (Pacote 3.4) ───────────────────────────────
+async function gerarDeck(){
+  const btn=document.getElementById('btn-deck');
+  btn.disabled=true;btn.textContent='⏳ Gerando...';
+  try{
+    const{data:rel}=await sb.from('relatorios_mensais').select('*').order('criado_em',{ascending:false}).limit(1).maybeSingle();
+    if(!rel){btn.disabled=false;btn.textContent='🎯 Gerar deck';alert('Gere o relatório mensal primeiro.');return;}
+    const resp=await fetch('/api/gerar-deck',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({relatorio:rel})});
+    if(resp.ok){
+      const{html}=await resp.json();
+      // Abre o deck em nova aba
+      const w=window.open('','_blank');
+      w.document.write(html);
+      w.document.close();
+    }else{alert('Erro ao gerar deck. Tente novamente.');}
+  }catch(e){alert('Erro ao gerar deck.');}
+  btn.disabled=false;btn.textContent='🎯 Gerar deck';
+}
+
+// ============================================================
+// OBSERVAÇÃO DE CAMPO (3.5) — VOOS · Metodologia TEM/LOSA
+// ============================================================
+
+// Senha do auditor (em produção: usar hash ou env var)
+const OBS_SENHA = 'voos2024';
+// Estado da observação em curso
+const obsState = { ameacas: [], resposta: null, erro: null };
+
+function autenticarAuditor() {
+  const senha = document.getElementById('obs-senha').value;
+  const erro = document.getElementById('obs-login-erro');
+  if (senha === OBS_SENHA) {
+    document.getElementById('obs-login').style.display = 'none';
+    document.getElementById('obs-formulario').style.display = 'block';
+    carregarHistoricoObs();
+  } else {
+    erro.style.display = 'block';
+    document.getElementById('obs-senha').value = '';
+  }
+}
+
+function sairAuditor() {
+  document.getElementById('obs-login').style.display = 'block';
+  document.getElementById('obs-formulario').style.display = 'none';
+  document.getElementById('obs-senha').value = '';
+  obsState.ameacas = []; obsState.resposta = null; obsState.erro = null;
+  document.querySelectorAll('.obs-chip').forEach(c => c.classList.remove('ativo'));
+}
+
+// Chips de seleção múltipla (ameaças)
+function obsChip(btn, campo, valor) {
+  btn.classList.toggle('ativo');
+  if (campo === 'ameaca') {
+    if (obsState.ameacas.includes(valor)) {
+      obsState.ameacas = obsState.ameacas.filter(a => a !== valor);
+    } else {
+      obsState.ameacas.push(valor);
+    }
+  }
+}
+
+// Chips de seleção única (resposta, erro)
+function obsChipUnico(btn, campo, valor) {
+  const container = document.getElementById('obs-' + campo + '-chips');
+  container.querySelectorAll('.obs-chip').forEach(c => c.classList.remove('ativo'));
+  btn.classList.add('ativo');
+  obsState[campo] = valor;
+}
+
+async function salvarObservacao() {
+  const area = document.getElementById('obs-area').value;
+  const turno = document.getElementById('obs-turno').value;
+  const ameacaDesc = document.getElementById('obs-ameaca-desc').value.trim();
+  const obsLivre = document.getElementById('obs-livre').value.trim();
+  const btn = document.getElementById('btn-salvar-obs');
+
+  if (!area) { alert('Selecione a área observada.'); return; }
+  if (obsState.ameacas.length === 0 && !ameacaDesc) {
+    alert('Descreva pelo menos uma ameaça identificada.'); return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Salvando...';
+
+  try {
+    const payload = {
+      area,
+      turno: turno || null,
+      ameacas: obsState.ameacas,
+      ameaca_desc: ameacaDesc || null,
+      resposta_operador: obsState.resposta,
+      erro_ocorreu: obsState.erro,
+      obs_livre: obsLivre || null,
+      criado_em: new Date().toISOString(),
+    };
+
+    const { error } = await sb.from('observacoes_campo').insert([payload]);
+    if (error) throw error;
+
+    // Limpa o formulário
+    document.getElementById('obs-area').value = '';
+    document.getElementById('obs-turno').value = '';
+    document.getElementById('obs-ameaca-desc').value = '';
+    document.getElementById('obs-livre').value = '';
+    obsState.ameacas = []; obsState.resposta = null; obsState.erro = null;
+    document.querySelectorAll('.obs-chip').forEach(c => c.classList.remove('ativo'));
+
+    btn.textContent = '✓ Registrado!';
+    setTimeout(() => { btn.disabled = false; btn.textContent = 'Registrar observação'; }, 1800);
+    carregarHistoricoObs();
+
+  } catch(e) {
+    alert('Erro ao salvar. Tente novamente.');
+    btn.disabled = false; btn.textContent = 'Registrar observação';
+  }
+}
+
+async function carregarHistoricoObs() {
+  const cont = document.getElementById('obs-historico');
+  if (!cont) return;
+  cont.innerHTML = '<div class="loading">Carregando...</div>';
+  try {
+    const { data: rows } = await sb.from('observacoes_campo')
+      .select('area, turno, ameacas, resposta_operador, erro_ocorreu, criado_em')
+      .order('criado_em', { ascending: false })
+      .limit(30);
+
+    if (!rows || rows.length === 0) {
+      cont.innerHTML = '<p style="font-size:12px;color:var(--text3);text-align:center;padding:12px">Nenhuma observação registrada ainda.</p>';
+      return;
+    }
+
+    // Agrega por área
+    const porArea = {};
+    rows.forEach(r => {
+      if (!porArea[r.area]) porArea[r.area] = { total: 0, inadequada: 0, erro: 0, ameacas: {} };
+      porArea[r.area].total++;
+      if (r.resposta_operador === 'inadequada') porArea[r.area].inadequada++;
+      if (r.erro_ocorreu && r.erro_ocorreu !== 'nao') porArea[r.area].erro++;
+      (r.ameacas || []).forEach(a => {
+        porArea[r.area].ameacas[a] = (porArea[r.area].ameacas[a] || 0) + 1;
+      });
+    });
+
+    let html = `<p style="font-size:11px;color:var(--text3);margin-bottom:12px">${rows.length} observações registradas · padrões por área</p>`;
+    Object.entries(porArea).sort((a,b) => b[1].total - a[1].total).forEach(([area, d]) => {
+      const pctInad = d.total > 0 ? Math.round(d.inadequada / d.total * 100) : 0;
+      const topAmeaca = Object.entries(d.ameacas).sort((a,b) => b[1]-a[1])[0];
+      html += `<div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <p style="font-size:13px;font-weight:700;color:var(--text)">${area}</p>
+          <span style="font-size:11px;color:var(--text3)">${d.total} obs.</span>
+        </div>
+        ${topAmeaca ? `<p style="font-size:11px;color:var(--text3);margin-bottom:4px">⚠ Ameaça mais frequente: <strong style="color:var(--text2)">${topAmeaca[0]}</strong> (${topAmeaca[1]}×)</p>` : ''}
+        ${d.inadequada > 0 ? `<p style="font-size:11px;color:var(--danger)">✗ Resposta inadequada: ${d.inadequada} vez${d.inadequada>1?'es':''} (${pctInad}%)</p>` : ''}
+        ${d.erro > 0 ? `<p style="font-size:11px;color:var(--danger)">⚡ Erros registrados: ${d.erro}</p>` : ''}
+      </div>`;
+    });
+    cont.innerHTML = html;
+  } catch(e) {
+    cont.innerHTML = '<p style="font-size:12px;color:var(--danger)">Erro ao carregar.</p>';
+  }
+}
 </script>
 
 <!-- MODAL: Registrar ação corretiva -->
