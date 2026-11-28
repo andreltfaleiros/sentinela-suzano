@@ -594,6 +594,8 @@ select:focus{outline:none;border-color:var(--verde)}
       <div class="ck-progress"><div class="ck-progress-fill" id="ck-bar" style="width:0%"></div></div>
       <p class="ck-progress-label"><span id="ck-cnt">0</span> de <span id="ck-total">0</span> itens concluídos</p>
     </div>
+    <button class="btn-primary" onclick="guiaAbrir()" style="width:100%;margin:10px 0 4px">▶ Modo guiado: o app lê, você executa e confere</button>
+    <p style="font-size:11px;color:var(--text3);margin-bottom:8px;line-height:1.4">Para quem opera sozinho, como na colheitadeira: o app lê cada item em voz alta, você executa e toca em <b>Conferido</b>. O tempo do checklist é medido.</p>
 
     <div class="ck-section">
       <p class="ck-section-title">Equipamentos de proteção</p>
@@ -1404,6 +1406,33 @@ async function enviarChecklist(){
   btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Turno iniciado!';
   setTimeout(()=>{btn.disabled=false;btn.innerHTML='<svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg> Confirmar início de turno';},3000);
 }
+/* ===== MODO GUIADO (operador solo): ler, executar e conferir ===== */
+var GUIA=null;
+function guiaEl(){let g=document.getElementById('guia');if(!g){g=document.createElement('div');g.id='guia';
+  g.style.cssText='position:fixed;inset:0;z-index:9999;background:#0E2A22;color:#fff;display:none;flex-direction:column;padding:4vh 6vw;font-family:var(--font)';document.body.appendChild(g);}return g;}
+function guiaFalar(t){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='pt-BR';u.rate=1;speechSynthesis.speak(u);}catch(e){}}
+function guiaAbrir(){
+  const its=Object.values(CK_ITEMS).flat().filter(i=>!ckChecked[i.id]);
+  if(!its.length){guiaFalar('Checklist já concluído.');return;}
+  GUIA={its,i:0,t0:Date.now()};guiaEl().style.display='flex';guiaRender(true);
+}
+function guiaRender(falar){
+  const g=guiaEl(),it=GUIA.its[GUIA.i];
+  g.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;opacity:.75"><span>Modo guiado · '+(GUIA.i+1)+' de '+GUIA.its.length+'</span><button onclick="guiaFechar()" style="background:none;border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 12px;font-size:13px">Sair</button></div>'+
+    '<div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px"><p style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.6">Leia · execute · confira</p>'+
+    '<p style="font-size:clamp(26px,6vw,54px);font-weight:700;line-height:1.15">'+it.text+'</p><p style="font-size:clamp(15px,2.6vw,22px);opacity:.75">'+it.hint+'</p></div>'+
+    '<button onclick="guiaOk()" style="width:100%;padding:22px;font-size:22px;font-weight:700;border:none;border-radius:14px;background:#3DBE8B;color:#0E2A22;margin-bottom:10px">✓ Conferido</button>'+
+    '<button onclick="guiaFalar(GUIA.its[GUIA.i].text)" style="width:100%;padding:12px;font-size:15px;border:1px solid rgba(255,255,255,.35);border-radius:12px;background:none;color:#fff">🔊 Repetir a leitura</button>';
+  if(falar)guiaFalar(it.text);
+}
+function guiaOk(){
+  ckChecked[GUIA.its[GUIA.i].id]=true;GUIA.i++;
+  if(GUIA.i<GUIA.its.length){guiaRender(true);return;}
+  const t=Math.round((Date.now()-GUIA.t0)/1000),mm=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');
+  guiaEl().innerHTML='<div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:12px"><p style="font-size:clamp(28px,6vw,52px);font-weight:700">✓ Checklist concluído</p><p style="font-size:18px;opacity:.8">Tempo: '+mm+'</p><p style="font-size:14px;opacity:.6;max-width:520px">O app mede o tempo de cada checklist. Com alguns turnos, a equipe sabe quanto ele leva de verdade.</p></div><button onclick="guiaFechar()" style="width:100%;padding:18px;font-size:18px;font-weight:700;border:none;border-radius:14px;background:#3DBE8B;color:#0E2A22">Voltar ao checklist</button>';
+  guiaFalar('Checklist concluído.');
+}
+function guiaFechar(){try{speechSynthesis.cancel();}catch(e){}guiaEl().style.display='none';GUIA=null;initChecklist();}
 function resetChecklist(){
   ckChecked={};
   initChecklist();
